@@ -29,6 +29,7 @@ class MovieViewCell: UICollectionViewCell {
         
         contentView.addSubview(posterImageView)
         posterImageView.fillSuperview()
+        posterImageView.addShadow()
     }
     
     required init?(coder: NSCoder) {

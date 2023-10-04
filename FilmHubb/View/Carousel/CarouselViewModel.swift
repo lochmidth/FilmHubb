@@ -9,12 +9,16 @@ import Foundation
 
 struct CarouselViewModel {
     
+    //MARK: - Properties
+    
     var movies: [Movie]
+    var type: CategoryType
     
+    //MARK: - Lifecycle
     
-    
-    init(movies: [Movie]) {
+    init(movies: [Movie], type: CategoryType) {
         self.movies = movies
+        self.type = type
     }
     
 }

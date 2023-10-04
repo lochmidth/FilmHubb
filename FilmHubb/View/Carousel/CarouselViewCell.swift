@@ -7,6 +7,8 @@
 
 import UIKit
 
+private let movieIdentifier = "CarouselViewCell"
+
 class CarouselViewCell: UITableViewCell {
     
     //MARK: - Porperties
@@ -18,7 +20,9 @@ class CarouselViewCell: UITableViewCell {
         layout.scrollDirection = .horizontal
         layout.itemSize = CGSize(width: 140, height: 200)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.register(MovieViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.backgroundColor = .clear
+        collectionView.backgroundView = UIView.init(frame: .zero)
+        collectionView.register(MovieViewCell.self, forCellWithReuseIdentifier: movieIdentifier)
         return collectionView
     }()
     
@@ -43,7 +47,7 @@ class CarouselViewCell: UITableViewCell {
     //MARK: - Helpers
     
     func configureCell() {
-        contentView.backgroundColor = .systemPink
+        contentView.backgroundColor = .white
         contentView.addSubview(collectionView)
         
         collectionView.delegate = self
@@ -52,8 +56,29 @@ class CarouselViewCell: UITableViewCell {
     
     func configure(with viewModel: CarouselViewModel) {
         self.viewModel = viewModel
+        
+        if viewModel.type == .nowPlaying {
+            collectionView.collectionViewLayout = customLayoutForFirstCarousel()
+        } else {
+            collectionView.collectionViewLayout = defaultLayoutForOtherCarousels()
+        }
+        
         collectionView.reloadData()
     }
+    
+    private func customLayoutForFirstCarousel() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.itemSize = CGSize(width: 210, height: 300)
+        return layout
+    }
+    
+    private func defaultLayoutForOtherCarousels() -> UICollectionViewLayout {
+            let layout = UICollectionViewFlowLayout()
+            layout.scrollDirection = .horizontal
+            layout.itemSize = CGSize(width: 140, height: 200)
+            return layout
+        }
 }
 
 extension CarouselViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -63,10 +88,11 @@ extension CarouselViewCell: UICollectionViewDelegate, UICollectionViewDataSource
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! MovieViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieIdentifier, for: indexPath) as! MovieViewCell
         guard let viewModel else { return cell}
         let movie = viewModel.movies[indexPath.item]
         cell.configure(viewModel: MovieViewModel(movie: movie))
         return cell
     }
+    
 }

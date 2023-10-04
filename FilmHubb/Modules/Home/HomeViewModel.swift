@@ -45,6 +45,8 @@ enum CategoryType: Int, CaseIterable {
 
 class HomeViewModel {
     
+    //MARK: - Properties
+    
     struct Section {
         let title: String
         var movies: [Movie]
@@ -55,9 +57,13 @@ class HomeViewModel {
     
     var sections = [Section]()
     
+    //MARK: - Lifecycle
+    
     init() {
         sections = CategoryType.allCases.map({ Section(title: $0.description, movies: [], type: $0) })
     }
+    
+    //MARK: - Helpers
     
     func updateSection(type: CategoryType, movies: [Movie]) {
         guard let index = self.sections.firstIndex(where: { $0.type == type }) else { return }
