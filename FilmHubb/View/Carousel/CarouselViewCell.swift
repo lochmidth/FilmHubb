@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol CarouselViewCellDelegate: AnyObject {
+    func handleShowInspectorController(withId id: Int)
+}
+
 private let movieIdentifier = "CarouselViewCell"
 
 class CarouselViewCell: UITableViewCell {
@@ -14,6 +18,8 @@ class CarouselViewCell: UITableViewCell {
     //MARK: - Porperties
     
     var viewModel: CarouselViewModel?
+    
+    weak var delegate: CarouselViewCellDelegate?
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -58,27 +64,16 @@ class CarouselViewCell: UITableViewCell {
         self.viewModel = viewModel
         
         if viewModel.type == .nowPlaying {
-            collectionView.collectionViewLayout = customLayoutForFirstCarousel()
+            collectionView.collectionViewLayout = viewModel.customLayoutForFirstCarousel()
         } else {
-            collectionView.collectionViewLayout = defaultLayoutForOtherCarousels()
+            collectionView.collectionViewLayout = viewModel.defaultLayoutForOtherCarousels()
         }
         
         collectionView.reloadData()
+        collectionView.contentOffset.x = 0
     }
     
-    private func customLayoutForFirstCarousel() -> UICollectionViewLayout {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.itemSize = CGSize(width: 210, height: 300)
-        return layout
-    }
     
-    private func defaultLayoutForOtherCarousels() -> UICollectionViewLayout {
-            let layout = UICollectionViewFlowLayout()
-            layout.scrollDirection = .horizontal
-            layout.itemSize = CGSize(width: 140, height: 200)
-            return layout
-        }
 }
 
 extension CarouselViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -89,10 +84,15 @@ extension CarouselViewCell: UICollectionViewDelegate, UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: movieIdentifier, for: indexPath) as! MovieViewCell
-        guard let viewModel else { return cell}
+        guard let viewModel = viewModel else { return cell}
         let movie = viewModel.movies[indexPath.item]
         cell.configure(viewModel: MovieViewModel(movie: movie))
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let viewModel = viewModel else { return }
+        delegate?.handleShowInspectorController(withId: viewModel.movies[indexPath.item].id)
     }
     
 }

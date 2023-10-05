@@ -45,11 +45,9 @@ class HomeController: UIViewController {
     
     //MARK: - Actions
     
-    //FIXME: - Başa sarmıyor.
     @objc func handleRefresh() {
         DispatchQueue.main.async {
             self.homeTable.reloadData()
-//            self.homeTable.contentOffset.x = 0
         }
     }
     
@@ -97,6 +95,7 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
         let cellViewModel = CarouselViewModel(movies: viewModel.sections[indexPath.section].movies,
                                               type: viewModel.sections[indexPath.section].type)
         cell.configure(with: cellViewModel)
+        cell.delegate = self
         
         return cell
     }
@@ -129,8 +128,29 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+//MARK: - HomeViewModelDelegate
+
 extension HomeController: HomeViewModelDelegate {
     func didFetchMovies() {
         handleRefresh()
+    }
+}
+
+//MARK: - CarouselViewCellDelegate
+
+extension HomeController: CarouselViewCellDelegate {
+    func handleShowInspectorController(withId id: Int) {
+        viewModel.getMovie(withId: id) { movieInfo in
+            self.viewModel.getCredits(forId: id) { movieCredits in
+                self.viewModel.getMovieVideos(forId: id) { movieVideos in
+                    DispatchQueue.main.async {
+                        let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
+                        let nav = UINavigationController(rootViewController: controller)
+                        nav.modalPresentationStyle = .fullScreen
+                        self.present(nav, animated: true)
+                    }
+                }
+            }
+        }
     }
 }
