@@ -29,7 +29,7 @@ class InspectorViewModel {
     }
     
     var infoText: String? {
-        "\(movie.genres?.first?.name ?? "")  ・  \(releaseDate ?? "")  ・  \(movie.runtime ?? 0) minutes  ・  \(voteString ?? "")/10"
+        "\(movie.genres?.first?.name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
     }
     
     var backdropImageUrl: URL? {
