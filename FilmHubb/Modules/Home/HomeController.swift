@@ -7,6 +7,8 @@
 
 import UIKit
 
+private let carouselIdentifier = "NowPlayingCarouselCell"
+
 class HomeController: UIViewController {
     
     //MARK: - Properties
@@ -59,7 +61,7 @@ class HomeController: UIViewController {
         
         view.backgroundColor = .white
         
-        homeTable.register(CarouselViewCell.self, forCellReuseIdentifier: "NowPlayingCarouselCell")
+        homeTable.register(CarouselViewCell.self, forCellReuseIdentifier: carouselIdentifier)
         homeTable.delegate = self
         homeTable.dataSource = self
         
@@ -88,17 +90,25 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NowPlayingCarouselCell", for: indexPath) as! CarouselViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: carouselIdentifier, for: indexPath) as! CarouselViewCell
         
-        
-        let cellViewModel = CarouselViewModel(movies: viewModel.sections[indexPath.section].movies)
+        let cellViewModel = CarouselViewModel(movies: viewModel.sections[indexPath.section].movies,
+                                              type: viewModel.sections[indexPath.section].type)
         cell.configure(with: cellViewModel)
+        cell.delegate = self
+        
         return cell
-        
-        
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        let divider = cell.subviews.filter({ $0.frame.minY == 0 && $0 !== cell.contentView }).first
+        divider?.isHidden = true
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return 300
+        }
         return 200
     }
     
@@ -118,8 +128,29 @@ extension HomeController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+//MARK: - HomeViewModelDelegate
+
 extension HomeController: HomeViewModelDelegate {
     func didFetchMovies() {
         handleRefresh()
+    }
+}
+
+//MARK: - CarouselViewCellDelegate
+
+extension HomeController: CarouselViewCellDelegate {
+    func handleShowInspectorController(withId id: Int) {
+        viewModel.getMovie(withId: id) { movieInfo in
+            self.viewModel.getCredits(forId: id) { movieCredits in
+                self.viewModel.getMovieVideos(forId: id) { movieVideos in
+                    DispatchQueue.main.async {
+                        let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
+                        let nav = UINavigationController(rootViewController: controller)
+                        nav.modalPresentationStyle = .fullScreen
+                        self.present(nav, animated: true)
+                    }
+                }
+            }
+        }
     }
 }

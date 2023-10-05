@@ -45,6 +45,8 @@ enum CategoryType: Int, CaseIterable {
 
 class HomeViewModel {
     
+    //MARK: - Properties
+    
     struct Section {
         let title: String
         var movies: [Movie]
@@ -55,9 +57,13 @@ class HomeViewModel {
     
     var sections = [Section]()
     
+    //MARK: - Lifecycle
+    
     init() {
         sections = CategoryType.allCases.map({ Section(title: $0.description, movies: [], type: $0) })
     }
+    
+    //MARK: - Helpers
     
     func updateSection(type: CategoryType, movies: [Movie]) {
         guard let index = self.sections.firstIndex(where: { $0.type == type }) else { return }
@@ -73,8 +79,41 @@ class HomeViewModel {
                 case .success(let movies):
                     self.updateSection(type: type, movies: movies)
                 case .failure(let error):
-                    print(error)
+                    print("DEBUG: Error while fetching movie lists, \(error)")
                 }
+            }
+        }
+    }
+    
+    func getMovie(withId id: Int, completion: @escaping(Movie) -> Void) {
+        MovieService.shared.fetchMovie(forId: id) { resultForMovie in
+            switch resultForMovie {
+            case .success(let movieInfo):
+                completion(movieInfo)
+            case .failure(let error):
+                print("DEBUG: Error while fetching movie info, \(error)")
+            }
+        }
+    }
+    
+    func getCredits(forId id: Int, completion: @escaping(MovieCredits) -> Void) {
+        MovieService.shared.fetchCredits(forId: id) { resultForCredits in
+            switch resultForCredits {
+            case .success(let movieCredits):
+                completion(movieCredits)
+            case .failure(let error):
+                print("DEBUG: Error while fetching movie credits, \(error)")
+            }
+        }
+    }
+    
+    func getMovieVideos(forId id: Int, completion: @escaping(MovieVideos) -> Void) {
+        MovieService.shared.getVideos(forId: id) { resultforMovieVideos in
+            switch resultforMovieVideos {
+            case .success(let movieVideos):
+                completion(movieVideos)
+            case .failure(let error):
+                print("DEBUG: Error while fetching movie videos, \(error)")
             }
         }
     }

@@ -25,6 +25,8 @@
 		C2B91F4C2ACB0A3200793947 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B91F4B2ACB0A3200793947 /* Constants.swift */; };
 		C2B91F502ACB15CA00793947 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B91F4F2ACB15CA00793947 /* Movie.swift */; };
 		C2B91F562ACB252800793947 /* MovieViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B91F552ACB252800793947 /* MovieViewCell.swift */; };
+		C2CF91912ACDA4D600CB82FC /* InspectorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CF91902ACDA4D600CB82FC /* InspectorController.swift */; };
+		C2CF91952ACDA56D00CB82FC /* InspectorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CF91942ACDA56D00CB82FC /* InspectorViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +49,8 @@
 		C2B91F4B2ACB0A3200793947 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C2B91F4F2ACB15CA00793947 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		C2B91F552ACB252800793947 /* MovieViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieViewCell.swift; sourceTree = "<group>"; };
+		C2CF91902ACDA4D600CB82FC /* InspectorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorController.swift; sourceTree = "<group>"; };
+		C2CF91942ACDA56D00CB82FC /* InspectorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 				C2B91F372ACADA2900793947 /* Model */,
 				C2B91F362ACADA2500793947 /* View */,
 				C2B91F352ACADA2300793947 /* Modules */,
+				C2CF918F2ACDA4BC00CB82FC /* Inspector */,
 				C2B91F382ACADA3E00793947 /* Services */,
 				C2B91F392ACADA4000793947 /* Utils */,
 				C2B91F202ACADA1300793947 /* AppDelegate.swift */,
@@ -164,6 +169,15 @@
 				C2B4ED852ACB2B2700314A5B /* MovieViewModel.swift */,
 			);
 			path = MovieView;
+			sourceTree = "<group>";
+		};
+		C2CF918F2ACDA4BC00CB82FC /* Inspector */ = {
+			isa = PBXGroup;
+			children = (
+				C2CF91902ACDA4D600CB82FC /* InspectorController.swift */,
+				C2CF91942ACDA56D00CB82FC /* InspectorViewModel.swift */,
+			);
+			path = Inspector;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,6 +263,8 @@
 				C2B91F232ACADA1300793947 /* SceneDelegate.swift in Sources */,
 				C2B91F472ACB003900793947 /* HomeViewModel.swift in Sources */,
 				C2B91F452ACAF71100793947 /* CarouselViewCell.swift in Sources */,
+				C2CF91952ACDA56D00CB82FC /* InspectorViewModel.swift in Sources */,
+				C2CF91912ACDA4D600CB82FC /* InspectorController.swift in Sources */,
 				C2B91F4C2ACB0A3200793947 /* Constants.swift in Sources */,
 				C2B91F412ACAE44F00793947 /* MainTabController.swift in Sources */,
 				C2B4ED882ACB2CD500314A5B /* CarouselViewModel.swift in Sources */,

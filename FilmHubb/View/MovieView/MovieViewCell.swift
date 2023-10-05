@@ -15,7 +15,7 @@ class MovieViewCell: UICollectionViewCell {
     
     var viewModel: MovieViewModel!
     
-    private let posterImageView: UIImageView = {
+    private lazy var posterImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.backgroundColor = .lightGray
@@ -29,6 +29,7 @@ class MovieViewCell: UICollectionViewCell {
         
         contentView.addSubview(posterImageView)
         posterImageView.fillSuperview()
+        posterImageView.addShadow()
     }
     
     required init?(coder: NSCoder) {
