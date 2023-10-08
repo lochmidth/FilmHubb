@@ -45,7 +45,7 @@ class InspectorController: UIViewController {
         let iv = UIImageView()
         iv.image = UIImage(systemName: "star")
         iv.tintColor = .mikadoYellow
-        iv.setDimensions(height: 30, width: 34)
+        iv.setDimensions(height: 25, width: 29)
         iv.isUserInteractionEnabled = true
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(handleFavoritePressed))
@@ -104,15 +104,22 @@ class InspectorController: UIViewController {
         configureUI()
         configureViewModel()
         showLoader(false)
-        MovieService.shared.deleteAllData {
-            print("DEBUG: all coreData is deleted.")
-        }
+//        MovieService.shared.deleteAllData {
+//            print("DEBUG: all coreData is deleted.")
+//        }
     }
     
     init(viewModel: InspectorViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
+    
+    deinit {
+        view.gestureRecognizers?.forEach {
+            view.removeGestureRecognizer($0)
+        }
+    }
+
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -123,7 +130,7 @@ class InspectorController: UIViewController {
     //MARK: - Actions
     
     @objc func handleDismissal() {
-        navigationController?.popViewController(animated: true)
+        navigationController?.popToRootViewController(animated: true)
     }
     
     @objc func handleSafariController() {
@@ -132,7 +139,7 @@ class InspectorController: UIViewController {
     }
     
     @objc func swipeAction(swipe: UISwipeGestureRecognizer) {
-        navigationController?.popViewController(animated: true)
+        navigationController?.popToRootViewController(animated: true)
     }
     
     @objc func handleFavoritePressed() {

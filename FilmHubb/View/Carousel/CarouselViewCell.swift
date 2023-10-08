@@ -72,9 +72,9 @@ class CarouselViewCell: UITableViewCell {
         collectionView.reloadData()
         collectionView.contentOffset.x = 0
     }
-    
-    
 }
+
+//MARK: - UICollectionViewDelegate/DataSource
 
 extension CarouselViewCell: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
