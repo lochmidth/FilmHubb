@@ -70,15 +70,15 @@ extension SearchController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        showLoader(true)
         let id = viewModel.movies[indexPath.item].id
         viewModel.getMovie(withId: id) { movieInfo in
             self.viewModel.getCredits(forId: id) { movieCredits in
                 self.viewModel.getMovieVideos(forId: id) { movieVideos in
                     DispatchQueue.main.async {
                         let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
-                        let nav = UINavigationController(rootViewController: controller)
-                        nav.modalPresentationStyle = .fullScreen
-                        self.present(nav, animated: true)
+                        controller.modalPresentationStyle = .fullScreen
+                        self.navigationController?.pushViewController(controller, animated: true)
                     }
                 }
             }

@@ -11,18 +11,22 @@ class InspectorController: UIViewController {
     
     //MARK: - Properties
     
-//    private let scrollView: UIScrollView = {
-//        let scroll = UIScrollView()
-//        scroll.showsVerticalScrollIndicator = true
-//        scroll.isDirectionalLockEnabled = true
-//        scroll.showsHorizontalScrollIndicator = false
-//        return scroll
-//    }()
-//
-//    let contentView: UIView = {
-//        let view = UIView()
-//        return view
-//    }()
+    private lazy var scrollView: UIScrollView = {
+        let sv = UIScrollView(frame: .zero)
+        sv.layoutIfNeeded()
+        sv.frame = self.view.bounds
+        sv.contentSize = CGSize(width: self.view.frame.width , height: self.view.frame.size.height)
+        sv.autoresizingMask = .flexibleHeight
+        sv.showsVerticalScrollIndicator = true
+        sv.bounces = true
+        return sv
+    }()
+    
+    private lazy var containerView: UIView = {
+        let view = UIView()
+        view.frame.size = CGSize(width: scrollView.frame.size.width, height: scrollView.frame.size.height)
+        return view
+    }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -34,6 +38,19 @@ class InspectorController: UIViewController {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
         iv.backgroundColor = .lightGray
+        return iv
+    }()
+    
+    private lazy var favoriteStar: UIImageView = {
+        let iv = UIImageView()
+        iv.image = UIImage(systemName: "star")
+        iv.tintColor = .mikadoYellow
+        iv.setDimensions(height: 30, width: 34)
+        iv.isUserInteractionEnabled = true
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleFavoritePressed))
+        iv.addGestureRecognizer(tap)
+        
         return iv
     }()
     
@@ -86,6 +103,10 @@ class InspectorController: UIViewController {
         
         configureUI()
         configureViewModel()
+        showLoader(false)
+        MovieService.shared.deleteAllData {
+            print("DEBUG: all coreData is deleted.")
+        }
     }
     
     init(viewModel: InspectorViewModel) {
@@ -102,12 +123,29 @@ class InspectorController: UIViewController {
     //MARK: - Actions
     
     @objc func handleDismissal() {
-        dismiss(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     @objc func handleSafariController() {
         guard let url = viewModel.youtubeLink else { return }
         UIApplication.shared.open(url)
+    }
+    
+    @objc func swipeAction(swipe: UISwipeGestureRecognizer) {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func handleFavoritePressed() {
+        if viewModel.isFavorite {
+            MovieService.shared.deleteCoreData(forMovie: viewModel.movie) {
+                self.favoriteStar.image = UIImage(systemName: "star")
+            }
+        } else {
+            MovieService.shared.createCoreData(forMovie: viewModel.movie) {
+                self.favoriteStar.image = UIImage(systemName: "star.fill")
+            }
+        }
+        
     }
     
     //MARK: - Helpers
@@ -119,44 +157,65 @@ class InspectorController: UIViewController {
         movieDescription.text = viewModel.descriptionText
         castLabel.attributedText = viewModel.castText
         crewLabel.attributedText = viewModel.crewText
+        favoriteStar.image = viewModel.favoriteStarStatus
+        
     }
     
     func configureUI() {
         view.backgroundColor = .white
         
-        view.addSubview(titleLabel)
-        titleLabel.anchor(top: view.safeAreaLayoutGuide.topAnchor, left: view.leftAnchor, paddingLeft: 12)
+        view.addSubview(scrollView)
+        scrollView.addSubview(containerView)
         
-        view.addSubview(movieImageView)
-        movieImageView.anchor(top: titleLabel.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 8)
-        movieImageView.setDimensions(height: 250, width: view.frame.width)
+        let titleStack = UIStackView(arrangedSubviews: [titleLabel, favoriteStar])
+        titleStack.axis = .horizontal
+        titleStack.spacing = 4
         
-        view.addSubview(movieInfo)
-        movieInfo.anchor(top: movieImageView.bottomAnchor, left: view.leftAnchor, paddingTop: 12, paddingLeft: 12)
+        containerView.addSubview(titleStack)
+        titleStack.anchor(top: containerView.safeAreaLayoutGuide.topAnchor, left: containerView.leftAnchor,
+                          paddingLeft: 12)
         
-        view.addSubview(movieDescription)
-        movieDescription.anchor(top: movieInfo.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor,
+        containerView.addSubview(movieImageView)
+        movieImageView.anchor(top: titleLabel.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,
+                              paddingTop: 8)
+        movieImageView.setDimensions(height: 250, width: containerView.frame.width)
+        
+        containerView.addSubview(movieInfo)
+        movieInfo.anchor(top: movieImageView.bottomAnchor, left: containerView.leftAnchor,
+                         paddingTop: 12, paddingLeft: 12)
+        
+        containerView.addSubview(movieDescription)
+        movieDescription.anchor(top: movieInfo.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,
                                 paddingTop: 12, paddingLeft: 8, paddingRight: 8)
         
-        view.addSubview(trailerButton)
-        trailerButton.anchor(top: movieDescription.bottomAnchor, left: view.leftAnchor, paddingTop: 12, paddingLeft: 8)
+        containerView.addSubview(trailerButton)
+        trailerButton.anchor(top: movieDescription.bottomAnchor, left: containerView.leftAnchor,
+                             paddingTop: 12, paddingLeft: 8)
         
         let divider = UIView()
         divider.backgroundColor = .lightGray
         
-        view.addSubview(divider)
-        divider.anchor(top: trailerButton.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 24, height: 0.5)
+        containerView.addSubview(divider)
+        divider.anchor(top: trailerButton.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,
+                       paddingTop: 24, height: 0.5)
         
         let creditStack = UIStackView(arrangedSubviews: [crewLabel, castLabel])
         creditStack.axis = .horizontal
         creditStack.alignment = .leading
         creditStack.spacing = 12
         
-        view.addSubview(creditStack)
-        creditStack.anchor(top: divider.bottomAnchor, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 12, paddingLeft: 8, paddingRight: 8)
-        
+        containerView.addSubview(creditStack)
+        creditStack.anchor(top: divider.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,
+                           paddingTop: 12, paddingLeft: 8, paddingRight: 8)
         
         configureNavigationBar()
+        configureGestureRecognizer()
+    }
+    
+    func configureGestureRecognizer() {
+        let leftSwipe = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeAction(swipe:)))
+        leftSwipe.direction = .right
+        view.addGestureRecognizer(leftSwipe)
     }
     
     func configureNavigationBar() {

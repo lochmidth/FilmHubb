@@ -71,7 +71,7 @@ class HomeViewModel {
         self.delegate?.didFetchMovies()
     }
     
-    func getMovies() {
+    func getMovies(completion: @escaping() -> Void) {
         let types = sections.map({ $0.type })
         types.forEach { type in
             MovieService.shared.getMovies(for: type.listName) { results in
@@ -81,6 +81,7 @@ class HomeViewModel {
                 case .failure(let error):
                     print("DEBUG: Error while fetching movie lists, \(error)")
                 }
+                completion()
             }
         }
     }
