@@ -11,25 +11,29 @@ class FavoriteMoviesViewModel {
     
     //MARK: - Properties
     
+    private let service: MovieService
+    
     var ids = [Int]()
     var posterImageUrls = [String]()
     
     //MARK: - Lifecycle
     
-    init() {
-        fetchFavoriteMovies()
+    init(service: MovieService = MovieService.shared) {
+        self.service = service
+        fetchFavoriteMovies {}
     }
     
     //MARK: - Helpers
     
-    func fetchFavoriteMovies() {
+    func fetchFavoriteMovies(completion: @escaping() -> Void)  {
+        self.ids = [Int]()
+        self.posterImageUrls = [String]()
+        
         MovieService.shared.fetchCoreData { id, posterPath in
-//            self.ids.removeAll()
-//            self.posterImageUrls.removeAll()
-            
             self.ids.append(id)
             let fullPosterPath = "https://image.tmdb.org/t/p/w500/" + posterPath
             self.posterImageUrls.append(fullPosterPath)
+            completion()
         }
     }
     

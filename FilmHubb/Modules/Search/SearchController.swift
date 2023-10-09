@@ -14,10 +14,16 @@ class SearchController: UITableViewController {
     //MARK: - Properties
     
     private let searchController = UISearchController(searchResultsController: nil)
-    
     var viewModel = SearchViewModel()
-    
     private var searchTimer: Timer?
+    
+    private let noCellView: UIImageView = {
+        let iv = UIImageView()
+        iv.image = UIImage(systemName: "magnifyingglass")?.withRenderingMode(.alwaysOriginal)
+        iv.alpha = 0.08
+        iv.setDimensions(height: 300, width: 320)
+        return iv
+    }()
     
     //MARK: - Lifecycle
     
@@ -41,6 +47,9 @@ class SearchController: UITableViewController {
         tableView.rowHeight = 60
         tableView.separatorStyle = .singleLine
         
+        view.addSubview(noCellView)
+        noCellView.center(inView: view, yConstant: -100)
+        
         configureSearchController()
     }
     
@@ -62,12 +71,20 @@ class SearchController: UITableViewController {
 
 extension SearchController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if viewModel.movies.count > 0 {
+            noCellView.isHidden = true
+        } else {
+            noCellView.isHidden = false
+        }
+        
         return viewModel.movies.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: searchCellIdentifier, for: indexPath) as! SearchMovieCell
         cell.configure(viewModel: SearchMovieViewModel(searchResult: viewModel.movies[indexPath.item]))
+        
         return cell
     }
     
@@ -110,7 +127,7 @@ extension SearchController: UISearchResultsUpdating {
         
         searchTimer?.invalidate()
         
-        searchTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [weak self] _ in
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { [weak self] _ in
             self?.viewModel.searchMovie(withName: searchText) {
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()

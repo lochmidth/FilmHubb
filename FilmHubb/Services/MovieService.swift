@@ -232,7 +232,6 @@ class MovieService {
             let objectToDelete = movie[0] as! NSManagedObject
             managedContext.delete(objectToDelete)
             try managedContext.save()
-//            print("DEBUG: \(objectToDelete) is deleted.")
             completion()
         } catch {
             print("DEBUG: Error while deleting the context, \(error.localizedDescription)")
