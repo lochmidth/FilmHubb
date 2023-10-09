@@ -7,15 +7,32 @@
 
 
 import UIKit
+import JGProgressHUD
 
 extension UIColor {
     static func rgb(red: CGFloat, green: CGFloat, blue: CGFloat) -> UIColor {
         return UIColor.init(red: red/255, green: green/255, blue: blue/255, alpha: 1.0)
     }
+    
+    static let mikadoYellow = rgb(red: 255, green: 196, blue: 12)
 
 }
 
 extension UIViewController {
+    
+    static let hud = JGProgressHUD(style: .dark)
+    
+    func showLoader(_ show: Bool) {
+        DispatchQueue.main.async {
+            self.showLoader(false)
+        }
+        
+        if show {
+            UIViewController.hud.show(in: view)
+        } else {
+            UIViewController.hud.dismiss()
+        }
+    }
     
     func showMessage(withTitle title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)

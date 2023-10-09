@@ -16,7 +16,9 @@ class MainTabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.delegate = self
         configureViewControllers()
+        showLoader(true)
     }
     
     //MARK: - API
@@ -33,7 +35,10 @@ class MainTabController: UITabBarController {
         
         let search = templateNavigationController(title: "Search", unselectedImage: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass.fill"), rootViewController: SearchController())
         
-        setViewControllers([home, search], animated: true)
+        let layout = UICollectionViewFlowLayout()
+        let favorite = templateNavigationController(title: "Favorite Movies", unselectedImage: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"), rootViewController: FavoriteMoviesController(collectionViewLayout: layout))
+        
+        setViewControllers([home, search, favorite], animated: true)
         
         
         tabBar.isTranslucent = false
@@ -55,5 +60,12 @@ class MainTabController: UITabBarController {
         return nav
         
     }
-    
+}
+
+extension MainTabController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+        guard let navController = viewController as? UINavigationController else { return }
+        guard let favoriteMoviesController = navController.viewControllers.first as? FavoriteMoviesController else { return }
+        favoriteMoviesController.reloadData()
+    }
 }

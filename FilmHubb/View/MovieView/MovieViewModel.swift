@@ -9,13 +9,22 @@ import Foundation
 
 class MovieViewModel {
     
-    let movie: Movie
+    let movie: Movie?
+    var posterImageUrl = ""
     
     var posterImage: URL? {
-        return URL(string: "https://image.tmdb.org/t/p/w500/\(movie.posterPath ?? "")")
+        if movie != nil {
+            return URL(string: "https://image.tmdb.org/t/p/w500/\(movie?.posterPath ?? "")")
+        } else {
+            return URL(string: "https://image.tmdb.org/t/p/w500/\(posterImageUrl)")
+        }
     }
     
-    init(movie: Movie) {
+    init(movie: Movie? = nil, posterImageUrl: String? = nil ) {
         self.movie = movie
+        
+        if let url = posterImageUrl {
+            self.posterImageUrl = url
+        }
     }
 }

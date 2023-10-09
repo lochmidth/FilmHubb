@@ -15,6 +15,8 @@ class InspectorViewModel {
     let movieCredits: MovieCredits
     let movieVideos: MovieVideos
     
+    var isFavorite = false
+    
     var titleText: String? {
         movie.originalTitle
     }
@@ -29,11 +31,15 @@ class InspectorViewModel {
     }
     
     var infoText: String? {
-        "\(movie.genres?.first?.name ?? "")  ・  \(releaseDate ?? "")  ・  \(movie.runtime ?? 0) minutes  ・  \(voteString ?? "")/10"
+        "\(movie.genres?.first?.name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
     }
     
     var backdropImageUrl: URL? {
         URL(string: "https://image.tmdb.org/t/p/w500/\(movie.backdropPath ?? "")")
+    }
+    
+    var favoriteStarStatus: UIImage? {
+        return isFavorite ? UIImage(systemName: "star.fill") : UIImage(systemName: "star")
     }
     
     var descriptionText: String? {
@@ -107,6 +113,8 @@ class InspectorViewModel {
         self.movie = movie
         self.movieCredits = movieCredits
         self.movieVideos = movieVideos
+        
+        fetchCoreDataForCurrentMovie()
     }
     
     //MARK: - Helpers
@@ -124,5 +132,21 @@ class InspectorViewModel {
                 }
             }
         }
+    }
+    
+    func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void) {
+        MovieService.shared.createCoreData(forMovie: movie, completion: completion)
+    }
+    
+    func fetchCoreDataForCurrentMovie() {
+        MovieService.shared.fetchCoreData(forMovie: movie) { id, posterImageUrl in
+            if id == self.movie.id {
+                self.isFavorite = true
+            } else {
+                self.isFavorite = false
+            }
+        }
+            
+//            print("DEBUG: ID is \(id), posterImageUrl is \(posterImageUrl)")
     }
 }
