@@ -18,7 +18,15 @@ class InspectorViewModel {
     var isFavorite = false
     
     var titleText: String? {
-        movie.originalTitle
+        movie.title
+    }
+    
+    var originalTitleText: String? {
+        if movie.title == movie.originalTitle {
+            return nil
+        } else {
+            return movie.originalTitle
+        }
     }
     
     var releaseDate: String? {
@@ -48,7 +56,7 @@ class InspectorViewModel {
     
     var youtubeLink: URL? {
         guard let trailer = movieVideos.results.first(where: { $0.type == .trailer && $0.site == .youTube}) else { return nil }
-            return URL(string: "https://www.youtube.com/watch?v=\(trailer.key)")
+        return URL(string: "https://www.youtube.com/watch?v=\(trailer.key)")
     }
     
     var castText: NSMutableAttributedString? {
@@ -119,6 +127,17 @@ class InspectorViewModel {
     
     //MARK: - Helpers
     
+    func calculateTitleFontSize(for title: String, _ containerView: UIView) -> CGFloat {
+        let maxWidth = containerView.frame.width - 60
+        let titleSize = title.size(withAttributes: [.font: UIFont.boldSystemFont(ofSize: 24)])
+        
+        let fontScaleFactor = min(maxWidth / titleSize.width, 1.0)
+        let dynamicFontSize = 24 * fontScaleFactor
+        
+        return dynamicFontSize
+    }
+    
+    
     func appendNamesToAttributedString(_ attributedString: NSMutableAttributedString, title: String, names: [String], count: Int) {
         if !names.isEmpty {
             let titleText = NSAttributedString(string: "\(title)", attributes: [
@@ -146,7 +165,5 @@ class InspectorViewModel {
                 self.isFavorite = false
             }
         }
-            
-//            print("DEBUG: ID is \(id), posterImageUrl is \(posterImageUrl)")
     }
 }

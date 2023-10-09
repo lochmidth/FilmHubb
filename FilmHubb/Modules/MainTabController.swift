@@ -16,7 +16,6 @@ class MainTabController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.delegate = self
         configureViewControllers()
         showLoader(true)
     }
@@ -59,13 +58,5 @@ class MainTabController: UITabBarController {
         nav.title = title
         return nav
         
-    }
-}
-
-extension MainTabController: UITabBarControllerDelegate {
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        guard let navController = viewController as? UINavigationController else { return }
-        guard let favoriteMoviesController = navController.viewControllers.first as? FavoriteMoviesController else { return }
-        favoriteMoviesController.reloadData()
     }
 }

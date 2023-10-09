@@ -16,11 +16,15 @@ class SearchMovieViewModel {
     }
     
     var titleText: String? {
-        searchResult.originalTitle
+        searchResult.title
     }
     
-    var nameText: String? {
-        searchResult.originalName
+    var originalTitleText: String? {
+        if searchResult.title == searchResult.originalTitle {
+            return nil
+        } else {
+            return searchResult.originalTitle
+        }
     }
     
     //MARK: - Init

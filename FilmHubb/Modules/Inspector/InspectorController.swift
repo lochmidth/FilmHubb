@@ -34,6 +34,13 @@ class InspectorController: UIViewController {
         return label
     }()
     
+    private let originalTitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 14)
+        label.textColor = .lightGray
+        return label
+    }()
+    
     private let movieImageView: UIImageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
@@ -113,14 +120,7 @@ class InspectorController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
-    deinit {
-        view.gestureRecognizers?.forEach {
-            view.removeGestureRecognizer($0)
-        }
-    }
-
-    
+        
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -159,6 +159,8 @@ class InspectorController: UIViewController {
     
     func configureViewModel() {
         titleLabel.text = viewModel.titleText
+        titleLabel.font = UIFont.systemFont(ofSize: viewModel.calculateTitleFontSize(for: titleLabel.text ?? "", containerView))
+        originalTitleLabel.text = viewModel.originalTitleText
         movieImageView.sd_setImage(with: viewModel.backdropImageUrl)
         movieInfo.text = viewModel.infoText
         movieDescription.text = viewModel.descriptionText
@@ -182,8 +184,11 @@ class InspectorController: UIViewController {
         titleStack.anchor(top: containerView.safeAreaLayoutGuide.topAnchor, left: containerView.leftAnchor,
                           paddingLeft: 12)
         
+        containerView.addSubview(originalTitleLabel)
+        originalTitleLabel.anchor(top: titleStack.bottomAnchor, left: containerView.leftAnchor, paddingTop: 8, paddingLeft: 12)
+        
         containerView.addSubview(movieImageView)
-        movieImageView.anchor(top: titleLabel.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,
+        movieImageView.anchor(top: originalTitleLabel.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,
                               paddingTop: 8)
         movieImageView.setDimensions(height: 250, width: containerView.frame.width)
         

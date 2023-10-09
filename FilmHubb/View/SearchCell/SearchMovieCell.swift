@@ -26,6 +26,14 @@ class SearchMovieCell: UITableViewCell {
         return label
     }()
     
+    private let originalTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Original title"
+        label.textColor = .lightGray
+        label.font = UIFont.systemFont(ofSize: 12)
+        return label
+    }()
+    
     //MARK: - Lifecycle
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -35,8 +43,12 @@ class SearchMovieCell: UITableViewCell {
         posterImageView.setDimensions(height: frame.height, width: 40)
         posterImageView.anchor(top: topAnchor, left: leftAnchor, bottom: bottomAnchor, paddingTop: 4, paddingLeft: 4, paddingRight: 4)
         
-        addSubview(titleLabel)
-        titleLabel.centerY(inView: posterImageView, leftAnchor: posterImageView.rightAnchor, paddingLeft: 12)
+        let stack = UIStackView(arrangedSubviews: [titleLabel, originalTitleLabel])
+        stack.axis = .vertical
+        stack.spacing = 6
+        
+        addSubview(stack)
+        stack.centerY(inView: posterImageView, leftAnchor: posterImageView.rightAnchor, paddingLeft: 12)
     }
     
     required init?(coder: NSCoder) {
@@ -54,5 +66,6 @@ class SearchMovieCell: UITableViewCell {
         
         posterImageView.sd_setImage(with: viewModel.posterImage)
         titleLabel.text = viewModel.titleText
+        originalTitleLabel.text = viewModel.originalTitleText
     }
 }

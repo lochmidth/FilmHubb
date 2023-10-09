@@ -21,6 +21,10 @@ class FavoriteMoviesController: UICollectionViewController {
         configureUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        reloadData()
+    }
+    
     //MARK: - Lifecycle
     
     //MARK: - Actions
@@ -36,8 +40,9 @@ class FavoriteMoviesController: UICollectionViewController {
     }
     func reloadData() {
         DispatchQueue.main.async {
-            self.viewModel = FavoriteMoviesViewModel()
-            self.collectionView.reloadData()
+            self.viewModel.fetchFavoriteMovies {
+                self.collectionView.reloadData()
+            }
         }
     }
 }
