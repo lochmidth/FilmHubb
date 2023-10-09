@@ -24,8 +24,8 @@ class FavoriteMoviesViewModel {
     
     func fetchFavoriteMovies() {
         MovieService.shared.fetchCoreData { id, posterPath in
-            self.ids.removeAll()
-            self.posterImageUrls.removeAll()
+//            self.ids.removeAll()
+//            self.posterImageUrls.removeAll()
             
             self.ids.append(id)
             let fullPosterPath = "https://image.tmdb.org/t/p/w500/" + posterPath

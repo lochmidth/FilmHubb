@@ -17,6 +17,8 @@ class SearchController: UITableViewController {
     
     var viewModel = SearchViewModel()
     
+    private var searchTimer: Timer?
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -105,10 +107,15 @@ extension SearchController: UISearchBarDelegate {
 extension SearchController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text else { return }
-        viewModel.searchMovie(withName: searchText) {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
+        
+        searchTimer?.invalidate()
+        
+        searchTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [weak self] _ in
+            self?.viewModel.searchMovie(withName: searchText) {
+                DispatchQueue.main.async {
+                    self?.tableView.reloadData()
+                }
             }
-        }
+        })
     }
 }

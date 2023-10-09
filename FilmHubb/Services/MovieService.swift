@@ -147,7 +147,11 @@ class MovieService {
         
         let query = name.replacingOccurrences(of: " ", with: "+")
         
-        let request = NSMutableURLRequest(url: NSURL(string: "https://api.themoviedb.org/3/search/movie?query=\(query)&include_adult=false&language=en-US&page=1")! as URL,
+        let urlString = "https://api.themoviedb.org/3/search/movie?query=\(query)&include_adult=false&language=en-US&page=1"
+        guard let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
+        
+        let request = NSMutableURLRequest(url: NSURL(string: encodedString)!
+                                          as URL,
                                           cachePolicy: .useProtocolCachePolicy,
                                           timeoutInterval: 10.0)
         request.httpMethod = "GET"
