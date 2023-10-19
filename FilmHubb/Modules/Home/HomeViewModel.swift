@@ -57,9 +57,12 @@ class HomeViewModel {
     
     var sections = [Section]()
     
+    private let movieService: MovieService
+    
     //MARK: - Lifecycle
     
-    init() {
+    init(movieService: MovieService) {
+        self.movieService = movieService
         sections = CategoryType.allCases.map({ Section(title: $0.description, movies: [], type: $0) })
     }
     
@@ -74,7 +77,7 @@ class HomeViewModel {
     func getMovies(completion: @escaping() -> Void) {
         let types = sections.map({ $0.type })
         types.forEach { type in
-            MovieService.shared.getMovies(for: type.listName) { results in
+            movieService.getMovies(for: type.listName) { results in
                 switch results {
                 case .success(let movies):
                     self.updateSection(type: type, movies: movies)
@@ -87,7 +90,7 @@ class HomeViewModel {
     }
     
     func getMovie(withId id: Int, completion: @escaping(Movie) -> Void) {
-        MovieService.shared.fetchMovie(forId: id) { resultForMovie in
+        movieService.fetchMovie(forId: id) { resultForMovie in
             switch resultForMovie {
             case .success(let movieInfo):
                 completion(movieInfo)
@@ -98,7 +101,7 @@ class HomeViewModel {
     }
     
     func getCredits(forId id: Int, completion: @escaping(MovieCredits) -> Void) {
-        MovieService.shared.fetchCredits(forId: id) { resultForCredits in
+        movieService.fetchCredits(forId: id) { resultForCredits in
             switch resultForCredits {
             case .success(let movieCredits):
                 completion(movieCredits)
@@ -109,7 +112,7 @@ class HomeViewModel {
     }
     
     func getMovieVideos(forId id: Int, completion: @escaping(MovieVideos) -> Void) {
-        MovieService.shared.getVideos(forId: id) { resultforMovieVideos in
+        movieService.getVideos(forId: id) { resultforMovieVideos in
             switch resultforMovieVideos {
             case .success(let movieVideos):
                 completion(movieVideos)
