@@ -14,6 +14,7 @@ class InspectorViewModel {
     let movie: Movie
     let movieCredits: MovieCredits
     let movieVideos: MovieVideos
+    var movieService: MovieService
     
     var isFavorite = false
     
@@ -117,7 +118,8 @@ class InspectorViewModel {
     
     //MARK: - Lifecycle
     
-    init(movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
+    init(movieService: MovieService, movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
+        self.movieService = movieService
         self.movie = movie
         self.movieCredits = movieCredits
         self.movieVideos = movieVideos
@@ -154,11 +156,11 @@ class InspectorViewModel {
     }
     
     func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void) {
-        MovieService.shared.createCoreData(forMovie: movie, completion: completion)
+        movieService.createCoreData(forMovie: movie, completion: completion)
     }
     
     func fetchCoreDataForCurrentMovie() {
-        MovieService.shared.fetchCoreData(forMovie: movie) { id, posterImageUrl in
+        movieService.fetchCoreData(forMovie: movie) { id, posterImageUrl in
             if id == self.movie.id {
                 self.isFavorite = true
             } else {

@@ -11,17 +11,18 @@ class FavoriteMoviesViewModel {
     
     //MARK: - Properties
     
-    private let service: MovieService
+    private let movieService: MovieService
     
     var ids = [Int]()
     var posterImageUrls = [String]()
     
     //MARK: - Lifecycle
     
-    init(service: MovieService = MovieService.shared) {
-        self.service = service
+    init(movieService: MovieService) {
+        self.movieService = movieService
         fetchFavoriteMovies {}
     }
+   
     
     //MARK: - Helpers
     
@@ -29,7 +30,7 @@ class FavoriteMoviesViewModel {
         self.ids = [Int]()
         self.posterImageUrls = [String]()
         
-        MovieService.shared.fetchCoreData { id, posterPath in
+        movieService.fetchCoreData { id, posterPath in
             self.ids.append(id)
             let fullPosterPath = "https://image.tmdb.org/t/p/w500/" + posterPath
             self.posterImageUrls.append(fullPosterPath)
@@ -38,7 +39,7 @@ class FavoriteMoviesViewModel {
     }
     
     func getMovie(withId id: Int, completion: @escaping(Movie) -> Void) {
-        MovieService.shared.fetchMovie(forId: id) { resultForMovie in
+        movieService.fetchMovie(forId: id) { resultForMovie in
             switch resultForMovie {
             case .success(let movieInfo):
                 completion(movieInfo)
@@ -49,7 +50,7 @@ class FavoriteMoviesViewModel {
     }
     
     func getCredits(forId id: Int, completion: @escaping(MovieCredits) -> Void) {
-        MovieService.shared.fetchCredits(forId: id) { resultForCredits in
+        movieService.fetchCredits(forId: id) { resultForCredits in
             switch resultForCredits {
             case .success(let movieCredits):
                 completion(movieCredits)
@@ -60,7 +61,7 @@ class FavoriteMoviesViewModel {
     }
     
     func getMovieVideos(forId id: Int, completion: @escaping(MovieVideos) -> Void) {
-        MovieService.shared.getVideos(forId: id) { resultforMovieVideos in
+        movieService.getVideos(forId: id) { resultforMovieVideos in
             switch resultforMovieVideos {
             case .success(let movieVideos):
                 completion(movieVideos)

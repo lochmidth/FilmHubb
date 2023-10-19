@@ -13,7 +13,8 @@ class HomeController: UIViewController {
     
     //MARK: - Properties
     
-    var viewModel = HomeViewModel(movieService: MovieService.shared)
+//    var viewModel = HomeViewModel(movieService: MovieService.shared)
+    var viewModel: HomeViewModel
     
     private let homeTable: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
@@ -21,6 +22,11 @@ class HomeController: UIViewController {
     }()
     
     //MARK: - Lifecycle
+    
+    init(viewModel: HomeViewModel = HomeViewModel(movieService: MovieService.shared)) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +36,10 @@ class HomeController: UIViewController {
         viewModel.getMovies {
             self.showLoader(false)
         }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLayoutSubviews() {
@@ -140,7 +150,7 @@ extension HomeController: CarouselViewCellDelegate {
             self.viewModel.getCredits(forId: id) { movieCredits in
                 self.viewModel.getMovieVideos(forId: id) { movieVideos in
                     DispatchQueue.main.async {
-                        let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
+                        let controller = InspectorController(viewModel: InspectorViewModel(movieService: MovieService.shared, movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
                         controller.modalPresentationStyle = .fullScreen
                         self.navigationController?.pushViewController(controller, animated: true)
                     }

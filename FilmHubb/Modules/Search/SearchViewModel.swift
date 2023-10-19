@@ -11,8 +11,14 @@ class SearchViewModel {
     
     var movies = [Movie]()
     
+    var movieService: MovieService
+    
+    init(movieService: MovieService) {
+        self.movieService = movieService
+    }
+    
     func searchMovie(withName name: String, completion: @escaping() -> Void) {
-        MovieService.shared.searchMovie(withName: name) { results in
+        movieService.searchMovie(withName: name) { results in
             switch results {
             case .success(let movies):
                 self.movies = movies
@@ -24,7 +30,7 @@ class SearchViewModel {
     }
     
     func getMovie(withId id: Int, completion: @escaping(Movie) -> Void) {
-        MovieService.shared.fetchMovie(forId: id) { resultForMovie in
+        movieService.fetchMovie(forId: id) { resultForMovie in
             switch resultForMovie {
             case .success(let movieInfo):
                 completion(movieInfo)
@@ -35,7 +41,7 @@ class SearchViewModel {
     }
     
     func getCredits(forId id: Int, completion: @escaping(MovieCredits) -> Void) {
-        MovieService.shared.fetchCredits(forId: id) { resultForCredits in
+        movieService.fetchCredits(forId: id) { resultForCredits in
             switch resultForCredits {
             case .success(let movieCredits):
                 completion(movieCredits)
@@ -46,7 +52,7 @@ class SearchViewModel {
     }
     
     func getMovieVideos(forId id: Int, completion: @escaping(MovieVideos) -> Void) {
-        MovieService.shared.getVideos(forId: id) { resultforMovieVideos in
+        movieService.getVideos(forId: id) { resultforMovieVideos in
             switch resultforMovieVideos {
             case .success(let movieVideos):
                 completion(movieVideos)

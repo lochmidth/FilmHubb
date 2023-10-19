@@ -14,7 +14,7 @@ class SearchController: UITableViewController {
     //MARK: - Properties
     
     private let searchController = UISearchController(searchResultsController: nil)
-    var viewModel = SearchViewModel()
+    var viewModel: SearchViewModel
     private var searchTimer: Timer?
     
     private let noCellView: UIImageView = {
@@ -26,6 +26,15 @@ class SearchController: UITableViewController {
     }()
     
     //MARK: - Lifecycle
+    
+    init(viewModel: SearchViewModel = SearchViewModel(movieService: MovieService.shared)) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,7 +104,7 @@ extension SearchController {
             self.viewModel.getCredits(forId: id) { movieCredits in
                 self.viewModel.getMovieVideos(forId: id) { movieVideos in
                     DispatchQueue.main.async {
-                        let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
+                        let controller = InspectorController(viewModel: InspectorViewModel(movieService: MovieService.shared, movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
                         controller.modalPresentationStyle = .fullScreen
                         self.navigationController?.pushViewController(controller, animated: true)
                     }
