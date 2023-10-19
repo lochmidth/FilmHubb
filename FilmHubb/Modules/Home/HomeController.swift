@@ -13,7 +13,7 @@ class HomeController: UIViewController {
     
     //MARK: - Properties
     
-    var viewModel = HomeViewModel()
+    var viewModel = HomeViewModel(movieService: MovieService.shared)
     
     private let homeTable: UITableView = {
         let tv = UITableView(frame: .zero, style: .grouped)
