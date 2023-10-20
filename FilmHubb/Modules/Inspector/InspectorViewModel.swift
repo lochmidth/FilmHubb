@@ -40,7 +40,7 @@ class InspectorViewModel {
     }
     
     var infoText: String? {
-        "\(movie.genres?.first?.name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
+        "\(movie.genres?[0].name ?? ""), \(movie.genres?[1].name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
     }
     
     var backdropImageUrl: URL? {
@@ -55,9 +55,14 @@ class InspectorViewModel {
         movie.overview
     }
     
-    var youtubeLink: URL? {
+    var trailerLink: URL? {
         guard let trailer = movieVideos.results.first(where: { $0.type == .trailer && $0.site == .youTube}) else { return nil }
         return URL(string: "https://www.youtube.com/watch?v=\(trailer.key)")
+    }
+    
+    var trailerTitle: String? {
+        guard let title = movieVideos.results.first(where: { $0.type == .trailer && $0.site == .youTube }) else { return nil }
+        return title.name
     }
     
     var castText: NSMutableAttributedString? {
@@ -129,7 +134,7 @@ class InspectorViewModel {
     
     //MARK: - Helpers
     
-    func calculateTitleFontSize(for title: String, _ containerView: UIView) -> CGFloat {
+    func calculateFontSize(for title: String, _ containerView: UIView) -> CGFloat {
         let maxWidth = containerView.frame.width - 60
         let titleSize = title.size(withAttributes: [.font: UIFont.boldSystemFont(ofSize: 24)])
         

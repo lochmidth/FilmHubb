@@ -83,7 +83,6 @@ class InspectorController: UIViewController {
     
     private lazy var trailerButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Watch Trailer ▶️", for: .normal)
         button.addTarget(self, action: #selector(handleSafariController), for: .touchUpInside)
         return button
     }()
@@ -134,7 +133,7 @@ class InspectorController: UIViewController {
     }
     
     @objc func handleSafariController() {
-        guard let url = viewModel.youtubeLink else { return }
+        guard let url = viewModel.trailerLink else { return }
         UIApplication.shared.open(url)
     }
     
@@ -159,11 +158,13 @@ class InspectorController: UIViewController {
     
     func configureViewModel() {
         titleLabel.text = viewModel.titleText
-        titleLabel.font = UIFont.systemFont(ofSize: viewModel.calculateTitleFontSize(for: titleLabel.text ?? "", containerView))
+        titleLabel.font = UIFont.systemFont(ofSize: viewModel.calculateFontSize(for: titleLabel.text ?? "", containerView))
         originalTitleLabel.text = viewModel.originalTitleText
         movieImageView.sd_setImage(with: viewModel.backdropImageUrl)
         movieInfo.text = viewModel.infoText
+        movieInfo.font = UIFont.systemFont(ofSize: viewModel.calculateFontSize(for: movieInfo.text ?? "", containerView))
         movieDescription.text = viewModel.descriptionText
+        trailerButton.setTitle("▶️ \(viewModel.trailerTitle ?? "")", for: .normal)
         castLabel.attributedText = viewModel.castText
         crewLabel.attributedText = viewModel.crewText
         favoriteStar.image = viewModel.favoriteStarStatus
@@ -193,8 +194,8 @@ class InspectorController: UIViewController {
         movieImageView.setDimensions(height: 250, width: containerView.frame.width)
         
         containerView.addSubview(movieInfo)
-        movieInfo.anchor(top: movieImageView.bottomAnchor, left: containerView.leftAnchor,
-                         paddingTop: 12, paddingLeft: 12)
+        movieInfo.anchor(top: movieImageView.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,
+                         paddingTop: 12, paddingLeft: 12, paddingRight: 12)
         
         containerView.addSubview(movieDescription)
         movieDescription.anchor(top: movieInfo.bottomAnchor, left: containerView.leftAnchor, right: containerView.rightAnchor,

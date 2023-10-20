@@ -20,6 +20,8 @@ enum APIError: Error {
 class MovieService {
     static let shared = MovieService()
     
+    private init(){}
+    
     func getMovies(for list: String, completion: @escaping(Result<[Movie], Error>) -> Void) {
         let headers = [
             "accept": "application/json",
