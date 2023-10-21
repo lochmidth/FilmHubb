@@ -17,6 +17,7 @@
 		C2B4ED842ACB281300314A5B /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = C2B4ED832ACB281300314A5B /* SDWebImage */; };
 		C2B4ED862ACB2B2700314A5B /* MovieViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B4ED852ACB2B2700314A5B /* MovieViewModel.swift */; };
 		C2B4ED882ACB2CD500314A5B /* CarouselViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B4ED872ACB2CD500314A5B /* CarouselViewModel.swift */; };
+		C2B73D5F2AE41E9600ECFD7C /* FilmHubbTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B73D5E2AE41E9600ECFD7C /* FilmHubbTests.swift */; };
 		C2B91F212ACADA1300793947 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B91F202ACADA1300793947 /* AppDelegate.swift */; };
 		C2B91F232ACADA1300793947 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B91F222ACADA1300793947 /* SceneDelegate.swift */; };
 		C2B91F2A2ACADA1500793947 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2B91F292ACADA1500793947 /* Assets.xcassets */; };
@@ -36,6 +37,16 @@
 		C2CF91952ACDA56D00CB82FC /* InspectorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CF91942ACDA56D00CB82FC /* InspectorViewModel.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C2B73D602AE41E9600ECFD7C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C2B91F152ACADA1300793947 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C2B91F1C2ACADA1300793947;
+			remoteInfo = FilmHubb;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		C244F1432AD2D8BA00496948 /* FilmHubb.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FilmHubb.xcdatamodel; sourceTree = "<group>"; };
 		C244F1462AD31F8000496948 /* FavoriteMoviesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteMoviesController.swift; sourceTree = "<group>"; };
@@ -45,6 +56,9 @@
 		C24CF2852ACF34F100C8EFE4 /* SearchMovieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMovieViewModel.swift; sourceTree = "<group>"; };
 		C2B4ED852ACB2B2700314A5B /* MovieViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieViewModel.swift; sourceTree = "<group>"; };
 		C2B4ED872ACB2CD500314A5B /* CarouselViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarouselViewModel.swift; sourceTree = "<group>"; };
+		C2B73D5C2AE41E9600ECFD7C /* FilmHubbTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FilmHubbTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2B73D5E2AE41E9600ECFD7C /* FilmHubbTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmHubbTests.swift; sourceTree = "<group>"; };
+		C2B73D652AE42E0E00ECFD7C /* FilmHubb.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = FilmHubb.xctestplan; sourceTree = "<group>"; };
 		C2B91F1D2ACADA1300793947 /* FilmHubb.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FilmHubb.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2B91F202ACADA1300793947 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C2B91F222ACADA1300793947 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,6 +81,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C2B73D592AE41E9600ECFD7C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C2B91F1A2ACADA1300793947 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -106,10 +127,20 @@
 			path = SearchCell;
 			sourceTree = "<group>";
 		};
+		C2B73D5D2AE41E9600ECFD7C /* FilmHubbTests */ = {
+			isa = PBXGroup;
+			children = (
+				C2B73D5E2AE41E9600ECFD7C /* FilmHubbTests.swift */,
+			);
+			path = FilmHubbTests;
+			sourceTree = "<group>";
+		};
 		C2B91F142ACADA1300793947 = {
 			isa = PBXGroup;
 			children = (
+				C2B73D652AE42E0E00ECFD7C /* FilmHubb.xctestplan */,
 				C2B91F1F2ACADA1300793947 /* FilmHubb */,
+				C2B73D5D2AE41E9600ECFD7C /* FilmHubbTests */,
 				C2B91F1E2ACADA1300793947 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -118,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				C2B91F1D2ACADA1300793947 /* FilmHubb.app */,
+				C2B73D5C2AE41E9600ECFD7C /* FilmHubbTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -227,6 +259,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C2B73D5B2AE41E9600ECFD7C /* FilmHubbTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2B73D642AE41E9600ECFD7C /* Build configuration list for PBXNativeTarget "FilmHubbTests" */;
+			buildPhases = (
+				C2B73D582AE41E9600ECFD7C /* Sources */,
+				C2B73D592AE41E9600ECFD7C /* Frameworks */,
+				C2B73D5A2AE41E9600ECFD7C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C2B73D612AE41E9600ECFD7C /* PBXTargetDependency */,
+			);
+			name = FilmHubbTests;
+			productName = FilmHubbTests;
+			productReference = C2B73D5C2AE41E9600ECFD7C /* FilmHubbTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C2B91F1C2ACADA1300793947 /* FilmHubb */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C2B91F312ACADA1500793947 /* Build configuration list for PBXNativeTarget "FilmHubb" */;
@@ -258,6 +308,10 @@
 				LastSwiftUpdateCheck = 1430;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					C2B73D5B2AE41E9600ECFD7C = {
+						CreatedOnToolsVersion = 14.3.1;
+						TestTargetID = C2B91F1C2ACADA1300793947;
+					};
 					C2B91F1C2ACADA1300793947 = {
 						CreatedOnToolsVersion = 14.3.1;
 					};
@@ -281,11 +335,19 @@
 			projectRoot = "";
 			targets = (
 				C2B91F1C2ACADA1300793947 /* FilmHubb */,
+				C2B73D5B2AE41E9600ECFD7C /* FilmHubbTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C2B73D5A2AE41E9600ECFD7C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C2B91F1B2ACADA1300793947 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -299,6 +361,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C2B73D582AE41E9600ECFD7C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C2B73D5F2AE41E9600ECFD7C /* FilmHubbTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C2B91F192ACADA1300793947 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -330,6 +400,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		C2B73D612AE41E9600ECFD7C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C2B91F1C2ACADA1300793947 /* FilmHubb */;
+			targetProxy = C2B73D602AE41E9600ECFD7C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		C2B91F2B2ACADA1500793947 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -342,6 +420,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		C2B73D622AE41E9600ECFD7C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6Y92LH56N8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alphanogn.FilmHubbTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FilmHubb.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FilmHubb";
+			};
+			name = Debug;
+		};
+		C2B73D632AE41E9600ECFD7C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6Y92LH56N8;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.alphanogn.FilmHubbTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/FilmHubb.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/FilmHubb";
+			};
+			name = Release;
+		};
 		C2B91F2F2ACADA1500793947 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -515,6 +629,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C2B73D642AE41E9600ECFD7C /* Build configuration list for PBXNativeTarget "FilmHubbTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C2B73D622AE41E9600ECFD7C /* Debug */,
+				C2B73D632AE41E9600ECFD7C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C2B91F182ACADA1300793947 /* Build configuration list for PBXProject "FilmHubb" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

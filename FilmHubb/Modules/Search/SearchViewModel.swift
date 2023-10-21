@@ -11,9 +11,9 @@ class SearchViewModel {
     
     var movies = [Movie]()
     
-    var movieService: MovieService
+    private let movieService: MovieServicing
     
-    init(movieService: MovieService) {
+    init(movieService: MovieServicing = MovieService()) {
         self.movieService = movieService
     }
     
@@ -25,6 +25,16 @@ class SearchViewModel {
                 completion()
             case .failure(let error):
                 print("DEBUG: Error while searching for movies, \(error)")
+            }
+        }
+    }
+    
+    func getAllMovieInfo(forId id: Int, completion: @escaping(Movie, MovieCredits, MovieVideos) -> Void) {
+        getMovie(withId: id) { movie in
+            self.getCredits(forId: id) { movieCredits in
+                self.getMovieVideos(forId: id) { movieVideos in
+                    completion(movie, movieCredits, movieVideos)
+                }
             }
         }
     }

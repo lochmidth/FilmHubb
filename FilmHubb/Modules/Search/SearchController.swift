@@ -27,7 +27,7 @@ class SearchController: UITableViewController {
     
     //MARK: - Lifecycle
     
-    init(viewModel: SearchViewModel = SearchViewModel(movieService: MovieService.shared)) {
+    init(viewModel: SearchViewModel = SearchViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -97,22 +97,20 @@ extension SearchController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showLoader(true)
-        let id = viewModel.movies[indexPath.item].id
-        viewModel.getMovie(withId: id) { movieInfo in
-            self.viewModel.getCredits(forId: id) { movieCredits in
-                self.viewModel.getMovieVideos(forId: id) { movieVideos in
-                    DispatchQueue.main.async {
-                        let controller = InspectorController(viewModel: InspectorViewModel(movieService: MovieService.shared, movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
-                        controller.modalPresentationStyle = .fullScreen
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
+        override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            showLoader(true)
+            let id = viewModel.movies[indexPath.item].id
+            viewModel.getAllMovieInfo(forId: id) { movieInfo, movieCredits, movieVideos in
+                DispatchQueue.main.async {
+                    let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
+                                                                                       movieCredits: movieCredits,
+                                                                                       movieVideos: movieVideos))
+                    controller.modalPresentationStyle = .fullScreen
+                    self.navigationController?.pushViewController(controller, animated: true)
                 }
             }
         }
     }
-}
 
 //MARK: - UISearchBarDelegate
 

@@ -57,11 +57,11 @@ class HomeViewModel {
     
     var sections = [Section]()
     
-    private let movieService: MovieService
+    private let movieService: MovieServicing
     
     //MARK: - Lifecycle
     
-    init(movieService: MovieService) {
+    init(movieService: MovieServicing = MovieService()) {
         self.movieService = movieService
         sections = CategoryType.allCases.map({ Section(title: $0.description, movies: [], type: $0) })
     }
@@ -85,6 +85,16 @@ class HomeViewModel {
                     print("DEBUG: Error while fetching movie lists, \(error)")
                 }
                 completion()
+            }
+        }
+    }
+    
+    func getAllMovieInfo(forId id: Int, completion: @escaping(Movie, MovieCredits, MovieVideos) -> Void) {
+        getMovie(withId: id) { movie in
+            self.getCredits(forId: id) { movieCredits in
+                self.getMovieVideos(forId: id) { movieVideos in
+                    completion(movie, movieCredits, movieVideos)
+                }
             }
         }
     }

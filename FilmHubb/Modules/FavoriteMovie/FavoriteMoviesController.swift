@@ -15,7 +15,7 @@ class FavoriteMoviesController: UICollectionViewController {
     
     var viewModel: FavoriteMoviesViewModel
     
-    init(viewModel: FavoriteMoviesViewModel = FavoriteMoviesViewModel(movieService: MovieService.shared)) {
+    init(viewModel: FavoriteMoviesViewModel = FavoriteMoviesViewModel()) {
         self.viewModel = viewModel
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
     }
@@ -72,15 +72,13 @@ extension FavoriteMoviesController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         showLoader(true)
         let id = viewModel.ids[indexPath.item]
-        viewModel.getMovie(withId: id) { movieInfo in
-            self.viewModel.getCredits(forId: id) { movieCredits in
-                self.viewModel.getMovieVideos(forId: id) { movieVideos in
-                    DispatchQueue.main.async {
-                        let controller = InspectorController(viewModel: InspectorViewModel(movieService: MovieService.shared, movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
-                        controller.modalPresentationStyle = .fullScreen
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
-                }
+        viewModel.getAllMovieInfo(forId: id) { movieInfo, movieCredits, movieVideos in
+            DispatchQueue.main.async {
+                let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
+                                                                                   movieCredits: movieCredits,
+                                                                                   movieVideos: movieVideos))
+                controller.modalPresentationStyle = .fullScreen
+                self.navigationController?.pushViewController(controller, animated: true)
             }
         }
     }

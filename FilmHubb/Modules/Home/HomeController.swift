@@ -13,7 +13,6 @@ class HomeController: UIViewController {
     
     //MARK: - Properties
     
-//    var viewModel = HomeViewModel(movieService: MovieService.shared)
     var viewModel: HomeViewModel
     
     private let homeTable: UITableView = {
@@ -23,7 +22,7 @@ class HomeController: UIViewController {
     
     //MARK: - Lifecycle
     
-    init(viewModel: HomeViewModel = HomeViewModel(movieService: MovieService.shared)) {
+    init(viewModel: HomeViewModel = HomeViewModel()) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -146,15 +145,13 @@ extension HomeController: HomeViewModelDelegate {
 extension HomeController: CarouselViewCellDelegate {
     func handleShowInspectorController(withId id: Int) {
         showLoader(true)
-        viewModel.getMovie(withId: id) { movieInfo in
-            self.viewModel.getCredits(forId: id) { movieCredits in
-                self.viewModel.getMovieVideos(forId: id) { movieVideos in
-                    DispatchQueue.main.async {
-                        let controller = InspectorController(viewModel: InspectorViewModel(movieService: MovieService.shared, movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
-                        controller.modalPresentationStyle = .fullScreen
-                        self.navigationController?.pushViewController(controller, animated: true)
-                    }
-                }
+        viewModel.getAllMovieInfo(forId: id) { movieInfo, movieCredits, movieVideos in
+            DispatchQueue.main.async {
+                let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
+                                                                                   movieCredits: movieCredits,
+                                                                                   movieVideos: movieVideos))
+                controller.modalPresentationStyle = .fullScreen
+                self.navigationController?.pushViewController(controller, animated: true)
             }
         }
     }

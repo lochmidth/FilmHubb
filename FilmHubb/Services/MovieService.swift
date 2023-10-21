@@ -16,11 +16,21 @@ enum APIError: Error {
     case invalidData
 }
 
+protocol MovieServicing {
+    func getMovies(for list: String, completion: @escaping(Result<[Movie], Error>) -> Void)
+    func fetchMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void)
+    func fetchCredits(forId id: Int, completion: @escaping(Result<MovieCredits, Error>) -> Void)
+    func getVideos(forId id: Int, completion: @escaping(Result<MovieVideos, Error>) -> Void)
+    func searchMovie(withName name: String, completion: @escaping(Result<[Movie], Error>) -> Void)
+    func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
+    func fetchCoreData(completion: @escaping(Int, String) -> Void)
+    func deleteCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
+}
 
-class MovieService {
-    static let shared = MovieService()
+class MovieService: MovieServicing {
+//    static let shared = MovieService()
     
-    private init(){}
+//    init(){}
     
     func getMovies(for list: String, completion: @escaping(Result<[Movie], Error>) -> Void) {
         let headers = [
@@ -199,13 +209,13 @@ class MovieService {
         }
     }
     
-    func fetchCoreData(forMovie movie: Movie? = nil, completion: @escaping(Int, String) -> Void) {
+    func fetchCoreData(completion: @escaping(Int, String) -> Void) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        if let id = movie?.id {
-            fetchRequest.predicate = NSPredicate(format: "id == %i", id)
-        }
+//        if let id = movie?.id {
+//            fetchRequest.predicate = NSPredicate(format: "id == %i", id)
+//        }
         fetchRequest.returnsObjectsAsFaults = false
         
         do {
@@ -263,3 +273,27 @@ class MovieService {
         }
     }
 }
+
+//MARK: Extension for fetchCoreData with a given movie id
+
+extension MovieServicing {
+    func fetchCoreData(forMovie movie: Movie, completion: @escaping(Int, String) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        fetchRequest.predicate = NSPredicate(format: "id == %i", movie.id)
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        do {
+            let result = try managedContext.fetch(fetchRequest)
+            for data in result as! [NSManagedObject] {
+                let posterImageUrl = data.value(forKey: "posterImageUrl")
+                let id = data.value(forKey: "id")
+                completion(id as! Int, posterImageUrl as! String)
+            }
+        } catch {
+            print("DEBUG: Error while fetching the core data, \(error.localizedDescription)")
+        }
+    }
+}
+

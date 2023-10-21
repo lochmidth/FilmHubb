@@ -14,7 +14,7 @@ class InspectorViewModel {
     let movie: Movie
     let movieCredits: MovieCredits
     let movieVideos: MovieVideos
-    var movieService: MovieService
+    var movieService: MovieServicing
     
     var isFavorite = false
     
@@ -123,7 +123,7 @@ class InspectorViewModel {
     
     //MARK: - Lifecycle
     
-    init(movieService: MovieService, movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
+    init(movieService: MovieServicing = MovieService(), movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
         self.movieService = movieService
         self.movie = movie
         self.movieCredits = movieCredits
@@ -170,6 +170,18 @@ class InspectorViewModel {
                 self.isFavorite = true
             } else {
                 self.isFavorite = false
+            }
+        }
+    }
+    
+    func handleFavoritePressed(completion: @escaping(UIImage?) -> Void) {
+        if isFavorite {
+            movieService.deleteCoreData(forMovie: movie) {
+                completion(UIImage(systemName: "star"))
+            }
+        } else {
+            movieService.createCoreData(forMovie: movie) {
+                completion(UIImage(systemName: "star.fill"))
             }
         }
     }

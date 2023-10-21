@@ -142,16 +142,9 @@ class InspectorController: UIViewController {
     }
     
     @objc func handleFavoritePressed() {
-        if viewModel.isFavorite {
-            MovieService.shared.deleteCoreData(forMovie: viewModel.movie) {
-                self.favoriteStar.image = UIImage(systemName: "star")
-            }
-        } else {
-            MovieService.shared.createCoreData(forMovie: viewModel.movie) {
-                self.favoriteStar.image = UIImage(systemName: "star.fill")
-            }
+        viewModel.handleFavoritePressed { image in
+            self.favoriteStar.image = image
         }
-        
     }
     
     //MARK: - Helpers

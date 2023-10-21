@@ -11,14 +11,14 @@ class FavoriteMoviesViewModel {
     
     //MARK: - Properties
     
-    private let movieService: MovieService
+    private let movieService: MovieServicing
     
     var ids = [Int]()
     var posterImageUrls = [String]()
     
     //MARK: - Lifecycle
     
-    init(movieService: MovieService) {
+    init(movieService: MovieServicing = MovieService()) {
         self.movieService = movieService
         fetchFavoriteMovies {}
     }
@@ -35,6 +35,16 @@ class FavoriteMoviesViewModel {
             let fullPosterPath = "https://image.tmdb.org/t/p/w500/" + posterPath
             self.posterImageUrls.append(fullPosterPath)
             completion()
+        }
+    }
+    
+    func getAllMovieInfo(forId id: Int, completion: @escaping(Movie, MovieCredits, MovieVideos) -> Void) {
+        getMovie(withId: id) { movie in
+            self.getCredits(forId: id) { movieCredits in
+                self.getMovieVideos(forId: id) { movieVideos in
+                    completion(movie, movieCredits, movieVideos)
+                }
+            }
         }
     }
     
