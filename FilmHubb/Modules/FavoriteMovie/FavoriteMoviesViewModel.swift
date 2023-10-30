@@ -49,7 +49,7 @@ class FavoriteMoviesViewModel {
     }
     
     func getMovie(withId id: Int, completion: @escaping(Movie) -> Void) {
-        movieService.fetchMovie(forId: id) { resultForMovie in
+        movieService.getMovie(forId: id) { resultForMovie in
             switch resultForMovie {
             case .success(let movieInfo):
                 completion(movieInfo)

@@ -40,7 +40,19 @@ class InspectorViewModel {
     }
     
     var infoText: String? {
-        "\(movie.genres?[0].name ?? ""), \(movie.genres?[1].name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
+        var info = ""
+        if let firstGenre = movie.genres?.first?.name {
+            info += firstGenre
+        }
+        if let secondGenre = movie.genres?.dropFirst().first?.name {
+            info += ", " + secondGenre
+        }
+        
+        info += " ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
+        
+        return info
+        
+//        "\(movie.genres?[0].name ?? ""), \(movie.genres?[1].name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
     }
     
     var backdropImageUrl: URL? {
@@ -136,13 +148,16 @@ class InspectorViewModel {
     
     func calculateFontSize(for title: String, _ containerView: UIView) -> CGFloat {
         let maxWidth = containerView.frame.width - 60
-        let titleSize = title.size(withAttributes: [.font: UIFont.boldSystemFont(ofSize: 24)])
+        let maxFontSize: CGFloat = 16.0
+        
+        let titleSize = title.size(withAttributes: [.font: UIFont.boldSystemFont(ofSize: maxFontSize)])
         
         let fontScaleFactor = min(maxWidth / titleSize.width, 1.0)
-        let dynamicFontSize = 24 * fontScaleFactor
+        let dynamicFontSize = maxFontSize * fontScaleFactor
         
-        return dynamicFontSize
+        return min(dynamicFontSize, maxFontSize)
     }
+
     
     
     func appendNamesToAttributedString(_ attributedString: NSMutableAttributedString, title: String, names: [String], count: Int) {

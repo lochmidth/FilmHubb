@@ -158,6 +158,7 @@ class InspectorController: UIViewController {
         movieInfo.font = UIFont.systemFont(ofSize: viewModel.calculateFontSize(for: movieInfo.text ?? "", containerView))
         movieDescription.text = viewModel.descriptionText
         trailerButton.setTitle("▶️ \(viewModel.trailerTitle ?? "")", for: .normal)
+        trailerButton.titleLabel?.font = UIFont.systemFont(ofSize: viewModel.calculateFontSize(for: trailerButton.titleLabel?.text ?? "", containerView))
         castLabel.attributedText = viewModel.castText
         crewLabel.attributedText = viewModel.crewText
         favoriteStar.image = viewModel.favoriteStarStatus

@@ -17,22 +17,47 @@ enum APIError: Error {
 }
 
 protocol MovieServicing {
-    func getMovies(for list: String, completion: @escaping(Result<[Movie], Error>) -> Void)
-    func fetchMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void)
+    func getMovies(for list: String, completion: @escaping(Result<Movies, Error>) -> Void)
+    func getMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void)
     func fetchCredits(forId id: Int, completion: @escaping(Result<MovieCredits, Error>) -> Void)
     func getVideos(forId id: Int, completion: @escaping(Result<MovieVideos, Error>) -> Void)
-    func searchMovie(withName name: String, completion: @escaping(Result<[Movie], Error>) -> Void)
+    func searchMovie(withName name: String, completion: @escaping(Result<Movies, Error>) -> Void)
     func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
     func fetchCoreData(completion: @escaping(Int, String) -> Void)
     func deleteCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
 }
 
 class MovieService: MovieServicing {
-//    static let shared = MovieService()
     
-//    init(){}
+    var session: URLSession
+    var decoder: JSONDecoder
     
-    func getMovies(for list: String, completion: @escaping(Result<[Movie], Error>) -> Void) {
+    init(session: URLSession = URLSession.shared, decoder: JSONDecoder = JSONDecoder()) {
+        self.session = session
+        self.decoder = decoder
+    }
+    
+    private func performRequest<T: Codable>(withRequest request: NSMutableURLRequest, responseType: T.Type, completion: @escaping(Result<T, Error>) -> Void) {
+        
+        let dataTask = session.dataTask(with: request as URLRequest) { data, response, error in
+            guard let data = data, error == nil else {
+                completion(.failure(error ?? APIError.invalidData))
+                return
+            }
+            
+            do {
+                self.decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let result = try self.decoder.decode(T.self, from: data)
+                completion(.success(result))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+        dataTask.resume()
+    }
+    
+    func getMovies(for list: String, completion: @escaping(Result<Movies, Error>) -> Void) {
+                
         let headers = [
             "accept": "application/json",
             "Authorization": "Bearer \(TOKEN_AUTH)"
@@ -45,25 +70,10 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let results = try decoder.decode(MoviesResponse.self, from: data)
-                completion(.success(results.results))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        
-        dataTask.resume()
+        performRequest(withRequest: request, responseType: Movies.self, completion: completion)
     }
     
-    func fetchMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void) {
+    func getMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void) {
         let headers = [
             "accept": "application/json",
             "Authorization": "Bearer \(TOKEN_AUTH)"
@@ -75,21 +85,7 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try decoder.decode(Movie.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        performRequest(withRequest: request, responseType: Movie.self, completion: completion)
     }
     
     func fetchCredits(forId id: Int, completion: @escaping(Result<MovieCredits, Error>) -> Void) {
@@ -104,21 +100,7 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try decoder.decode(MovieCredits.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        performRequest(withRequest: request, responseType: MovieCredits.self, completion: completion)
     }
     
     func getVideos(forId id: Int, completion: @escaping(Result<MovieVideos, Error>) -> Void) {
@@ -134,24 +116,10 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try decoder.decode(MovieVideos.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        performRequest(withRequest: request, responseType: MovieVideos.self, completion: completion)
     }
     
-    func searchMovie(withName name: String, completion: @escaping(Result<[Movie], Error>) -> Void) {
+    func searchMovie(withName name: String, completion: @escaping(Result<Movies, Error>) -> Void) {
         let headers = [
             "accept": "application/json",
             "Authorization": "Bearer \(TOKEN_AUTH)"
@@ -169,21 +137,7 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let results = try decoder.decode(MoviesResponse.self, from: data)
-                completion(.success(results.results))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        performRequest(withRequest: request, responseType: Movies.self, completion: completion)
     }
     
     //MARK: - CoreData
@@ -202,7 +156,6 @@ class MovieService: MovieServicing {
         
         do {
             try managedContext.save()
-//            print("DEBUG: \(posterImageUrl) and \(id) are saved in favoriteMovies entity in CoreData.")
             completion()
         } catch {
             print("DEBUG: Error while saving favorite movie to core data, \(error.localizedDescription)")
@@ -213,15 +166,11 @@ class MovieService: MovieServicing {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-//        if let id = movie?.id {
-//            fetchRequest.predicate = NSPredicate(format: "id == %i", id)
-//        }
         fetchRequest.returnsObjectsAsFaults = false
         
         do {
             let result = try managedContext.fetch(fetchRequest)
             for data in result as! [NSManagedObject] {
-//                print("DEBUG: Retrieved core data: \(data.value(forKey: "id")) and \(data.value(forKey: "posterImageUrl"))")
                 let posterImageUrl = data.value(forKey: "posterImageUrl")
                 let id = data.value(forKey: "id")
                 completion(id as! Int, posterImageUrl as! String)
@@ -265,7 +214,6 @@ class MovieService: MovieServicing {
                 let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
                 managedContext.delete(managedObjectData)
                 try managedContext.save()
-//                print("DEBUG: \(managedContext) is deleted.")
                 completion()
             }
         } catch let error as NSError {

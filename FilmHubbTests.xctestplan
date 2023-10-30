@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "C20CD4BB-A20B-45B9-AAFD-01042981A1F3",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:FilmHubb.xcodeproj",
+        "identifier" : "C2B73D5B2AE41E9600ECFD7C",
+        "name" : "FilmHubbTests"
+      }
+    }
+  ],
+  "version" : 1
+}

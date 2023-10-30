@@ -100,13 +100,19 @@ extension SearchController {
         override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
             showLoader(true)
             let id = viewModel.movies[indexPath.item].id
-            viewModel.getAllMovieInfo(forId: id) { movieInfo, movieCredits, movieVideos in
-                DispatchQueue.main.async {
-                    let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
-                                                                                       movieCredits: movieCredits,
-                                                                                       movieVideos: movieVideos))
-                    controller.modalPresentationStyle = .fullScreen
-                    self.navigationController?.pushViewController(controller, animated: true)
+            
+            viewModel.getAllMovieInfo(forId: id) { [weak self] results in
+                switch results {
+                case .success(let (movieInfo, movieCredits, movieVideos)):
+                    DispatchQueue.main.async {
+                        let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
+                                                                                           movieCredits: movieCredits,
+                                                                                           movieVideos: movieVideos))
+                        controller.modalPresentationStyle = .fullScreen
+                        self?.navigationController?.pushViewController(controller, animated: true)
+                    }
+                case .failure(let error):
+                    self?.showMessage(withTitle: "Ooops!", message: error.localizedDescription)
                 }
             }
         }
