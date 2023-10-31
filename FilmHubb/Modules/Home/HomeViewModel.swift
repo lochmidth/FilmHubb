@@ -57,20 +57,20 @@ class HomeViewModel {
     
     var sections = [Section]()
     
-    private let movieService: MovieService
+    private let movieService: MovieServicing
     
     //MARK: - Lifecycle
     
-    init(movieService: MovieService) {
+    init(movieService: MovieServicing = MovieService()) {
         self.movieService = movieService
         sections = CategoryType.allCases.map({ Section(title: $0.description, movies: [], type: $0) })
     }
     
     //MARK: - Helpers
     
-    func updateSection(type: CategoryType, movies: [Movie]) {
+    private func updateSection(type: CategoryType, movies: Movies) {
         guard let index = self.sections.firstIndex(where: { $0.type == type }) else { return }
-        self.sections[index].movies = movies
+        self.sections[index].movies = movies.results
         self.delegate?.didFetchMovies()
     }
     
@@ -82,42 +82,99 @@ class HomeViewModel {
                 case .success(let movies):
                     self.updateSection(type: type, movies: movies)
                 case .failure(let error):
-                    print("DEBUG: Error while fetching movie lists, \(error)")
+                    print("DEBUG: Error while fetching movie lists, \(error.localizedDescription)")
                 }
-                completion()
+            }
+        }
+        completion()
+    }
+    //FIXME: - refactor this:
+    func getAllMovieInfo(forId id: Int, completion: @escaping(Result<(Movie, MovieCredits, MovieVideos), Error>) -> Void) {
+        getMovieInfo(id: id) { results in
+            completion(results)
+        }
+    }
+    
+    private func getMovieInfo(id: Int, completion: @escaping(Result<(Movie, MovieCredits, MovieVideos), Error>) -> Void) {
+        var movieInfo: (Movie?, MovieCredits?, MovieVideos?) = (nil, nil, nil)
+        var error: Error?
+        
+        let dispatchGroup = DispatchGroup()
+        
+        dispatchGroup.enter()
+        getMovie(withId: id) { results in
+            switch results {
+            case .success(let movie):
+                movieInfo.0 = movie
+            case .failure(let err):
+                error = err
+            }
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.enter()
+        getCredits(forId: id) { results in
+            switch results {
+            case .success(let movieCredit):
+                movieInfo.1 = movieCredit
+            case .failure(let err):
+                error = err
+            }
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.enter()
+        getMovieVideos(forId: id) { results in
+            switch results {
+            case .success(let movieVideos):
+                movieInfo.2 = movieVideos
+            case .failure(let err):
+                error = err
+            }
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            if let error = error {
+                completion(.failure(error))
+            } else if let movie = movieInfo.0, let credits = movieInfo.1, let videos = movieInfo.2 {
+                completion(.success((movie, credits, videos)))
             }
         }
     }
     
-    func getMovie(withId id: Int, completion: @escaping(Movie) -> Void) {
-        movieService.fetchMovie(forId: id) { resultForMovie in
+    func getMovie(withId id: Int, completion: @escaping(Result<Movie, Error>) -> Void) {
+        movieService.getMovie(forId: id) { resultForMovie in
             switch resultForMovie {
             case .success(let movieInfo):
-                completion(movieInfo)
+                completion(.success(movieInfo))
             case .failure(let error):
                 print("DEBUG: Error while fetching movie info, \(error)")
+                completion(.failure(error))
             }
         }
     }
     
-    func getCredits(forId id: Int, completion: @escaping(MovieCredits) -> Void) {
+    func getCredits(forId id: Int, completion: @escaping(Result<MovieCredits, Error>) -> Void) {
         movieService.fetchCredits(forId: id) { resultForCredits in
             switch resultForCredits {
             case .success(let movieCredits):
-                completion(movieCredits)
+                completion(.success(movieCredits))
             case .failure(let error):
                 print("DEBUG: Error while fetching movie credits, \(error)")
+                completion(.failure(error))
             }
         }
     }
     
-    func getMovieVideos(forId id: Int, completion: @escaping(MovieVideos) -> Void) {
+    func getMovieVideos(forId id: Int, completion: @escaping(Result<MovieVideos, Error>) -> Void) {
         movieService.getVideos(forId: id) { resultforMovieVideos in
             switch resultforMovieVideos {
             case .success(let movieVideos):
-                completion(movieVideos)
+                completion(.success(movieVideos))
             case .failure(let error):
                 print("DEBUG: Error while fetching movie videos, \(error)")
+                completion(.failure(error))
             }
         }
     }

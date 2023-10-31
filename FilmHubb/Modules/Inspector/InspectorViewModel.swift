@@ -14,6 +14,7 @@ class InspectorViewModel {
     let movie: Movie
     let movieCredits: MovieCredits
     let movieVideos: MovieVideos
+    var movieService: MovieServicing
     
     var isFavorite = false
     
@@ -39,7 +40,19 @@ class InspectorViewModel {
     }
     
     var infoText: String? {
-        "\(movie.genres?.first?.name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
+        var info = ""
+        if let firstGenre = movie.genres?.first?.name {
+            info += firstGenre
+        }
+        if let secondGenre = movie.genres?.dropFirst().first?.name {
+            info += ", " + secondGenre
+        }
+        
+        info += " ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
+        
+        return info
+        
+//        "\(movie.genres?[0].name ?? ""), \(movie.genres?[1].name ?? "") ・ \(releaseDate ?? "") ・ \(movie.runtime ?? 0) minutes ・ \(voteString ?? "")/10"
     }
     
     var backdropImageUrl: URL? {
@@ -54,9 +67,14 @@ class InspectorViewModel {
         movie.overview
     }
     
-    var youtubeLink: URL? {
+    var trailerLink: URL? {
         guard let trailer = movieVideos.results.first(where: { $0.type == .trailer && $0.site == .youTube}) else { return nil }
         return URL(string: "https://www.youtube.com/watch?v=\(trailer.key)")
+    }
+    
+    var trailerTitle: String? {
+        guard let title = movieVideos.results.first(where: { $0.type == .trailer && $0.site == .youTube }) else { return nil }
+        return title.name
     }
     
     var castText: NSMutableAttributedString? {
@@ -117,7 +135,8 @@ class InspectorViewModel {
     
     //MARK: - Lifecycle
     
-    init(movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
+    init(movieService: MovieServicing = MovieService(), movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
+        self.movieService = movieService
         self.movie = movie
         self.movieCredits = movieCredits
         self.movieVideos = movieVideos
@@ -127,15 +146,18 @@ class InspectorViewModel {
     
     //MARK: - Helpers
     
-    func calculateTitleFontSize(for title: String, _ containerView: UIView) -> CGFloat {
+    func calculateFontSize(for title: String, _ containerView: UIView) -> CGFloat {
         let maxWidth = containerView.frame.width - 60
-        let titleSize = title.size(withAttributes: [.font: UIFont.boldSystemFont(ofSize: 24)])
+        let maxFontSize: CGFloat = 16.0
+        
+        let titleSize = title.size(withAttributes: [.font: UIFont.boldSystemFont(ofSize: maxFontSize)])
         
         let fontScaleFactor = min(maxWidth / titleSize.width, 1.0)
-        let dynamicFontSize = 24 * fontScaleFactor
+        let dynamicFontSize = maxFontSize * fontScaleFactor
         
-        return dynamicFontSize
+        return min(dynamicFontSize, maxFontSize)
     }
+
     
     
     func appendNamesToAttributedString(_ attributedString: NSMutableAttributedString, title: String, names: [String], count: Int) {
@@ -154,15 +176,27 @@ class InspectorViewModel {
     }
     
     func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void) {
-        MovieService.shared.createCoreData(forMovie: movie, completion: completion)
+        movieService.createCoreData(forMovie: movie, completion: completion)
     }
     
     func fetchCoreDataForCurrentMovie() {
-        MovieService.shared.fetchCoreData(forMovie: movie) { id, posterImageUrl in
+        movieService.fetchCoreData(forMovie: movie) { id, posterImageUrl in
             if id == self.movie.id {
                 self.isFavorite = true
             } else {
                 self.isFavorite = false
+            }
+        }
+    }
+    
+    func handleFavoritePressed(completion: @escaping(UIImage?) -> Void) {
+        if isFavorite {
+            movieService.deleteCoreData(forMovie: movie) {
+                completion(UIImage(systemName: "star"))
+            }
+        } else {
+            movieService.createCoreData(forMovie: movie) {
+                completion(UIImage(systemName: "star.fill"))
             }
         }
     }

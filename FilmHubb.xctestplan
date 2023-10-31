@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "8FCE2A04-786D-41B2-9666-CE3A31625529",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:FilmHubb.xcodeproj",
+          "identifier" : "C2B91F1C2ACADA1300793947",
+          "name" : "FilmHubb"
+        }
+      ]
+    },
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:FilmHubb.xcodeproj",
+      "identifier" : "C2B91F1C2ACADA1300793947",
+      "name" : "FilmHubb"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:FilmHubb.xcodeproj",
+        "identifier" : "C2B73D5B2AE41E9600ECFD7C",
+        "name" : "FilmHubbTests"
+      }
+    }
+  ],
+  "version" : 1
+}

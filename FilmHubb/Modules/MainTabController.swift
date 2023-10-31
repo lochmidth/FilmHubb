@@ -34,8 +34,7 @@ class MainTabController: UITabBarController {
         
         let search = templateNavigationController(title: "Search", unselectedImage: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass.fill"), rootViewController: SearchController())
         
-        let layout = UICollectionViewFlowLayout()
-        let favorite = templateNavigationController(title: "Favorite Movies", unselectedImage: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"), rootViewController: FavoriteMoviesController(collectionViewLayout: layout))
+        let favorite = templateNavigationController(title: "Favorite Movies", unselectedImage: UIImage(systemName: "star"), selectedImage: UIImage(systemName: "star.fill"), rootViewController: FavoriteMoviesController())
         
         setViewControllers([home, search, favorite], animated: true)
         

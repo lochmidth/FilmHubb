@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct MoviesResponse: Codable {
-    let results: [Movie]
+struct Movies: Codable {
+    var results: [Movie]
 }
 
 //MARK: - Movie
@@ -76,7 +76,6 @@ struct MovieVideos: Codable {
     let results: [Videos]
 }
 
-// MARK: - Result
 struct Videos: Codable {
     let name, key: String
     let site: Site

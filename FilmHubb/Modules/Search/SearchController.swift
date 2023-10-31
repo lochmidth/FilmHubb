@@ -14,7 +14,7 @@ class SearchController: UITableViewController {
     //MARK: - Properties
     
     private let searchController = UISearchController(searchResultsController: nil)
-    var viewModel = SearchViewModel()
+    var viewModel: SearchViewModel
     private var searchTimer: Timer?
     
     private let noCellView: UIImageView = {
@@ -26,6 +26,15 @@ class SearchController: UITableViewController {
     }()
     
     //MARK: - Lifecycle
+    
+    init(viewModel: SearchViewModel = SearchViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -88,22 +97,26 @@ extension SearchController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showLoader(true)
-        let id = viewModel.movies[indexPath.item].id
-        viewModel.getMovie(withId: id) { movieInfo in
-            self.viewModel.getCredits(forId: id) { movieCredits in
-                self.viewModel.getMovieVideos(forId: id) { movieVideos in
+        override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+            showLoader(true)
+            let id = viewModel.movies[indexPath.item].id
+            
+            viewModel.getAllMovieInfo(forId: id) { [weak self] results in
+                switch results {
+                case .success(let (movieInfo, movieCredits, movieVideos)):
                     DispatchQueue.main.async {
-                        let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo, movieCredits: movieCredits, movieVideos: movieVideos))
+                        let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
+                                                                                           movieCredits: movieCredits,
+                                                                                           movieVideos: movieVideos))
                         controller.modalPresentationStyle = .fullScreen
-                        self.navigationController?.pushViewController(controller, animated: true)
+                        self?.navigationController?.pushViewController(controller, animated: true)
                     }
+                case .failure(let error):
+                    self?.showMessage(withTitle: "Ooops!", message: error.localizedDescription)
                 }
             }
         }
     }
-}
 
 //MARK: - UISearchBarDelegate
 

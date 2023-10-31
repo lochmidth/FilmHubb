@@ -16,42 +16,42 @@ enum APIError: Error {
     case invalidData
 }
 
+protocol MovieServicing {
+    func getMovies(for list: String, completion: @escaping(Result<Movies, Error>) -> Void)
+    func getMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void)
+    func fetchCredits(forId id: Int, completion: @escaping(Result<MovieCredits, Error>) -> Void)
+    func getVideos(forId id: Int, completion: @escaping(Result<MovieVideos, Error>) -> Void)
+    func searchMovie(withName name: String, completion: @escaping(Result<Movies, Error>) -> Void)
+    func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
+    func fetchCoreData(completion: @escaping(Int, String) -> Void)
+    func deleteCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
+}
 
-class MovieService {
-    static let shared = MovieService()
+class MovieService: MovieServicing {
     
-    func getMovies(for list: String, completion: @escaping(Result<[Movie], Error>) -> Void) {
+    var networkManager: NetworkManaging
+    
+    init(networkManager: NetworkManaging = NetworkManager()) {
+        self.networkManager = networkManager
+    }
+    
+    func getMovies(for list: String, completion: @escaping(Result<Movies, Error>) -> Void) {
+                
         let headers = [
             "accept": "application/json",
             "Authorization": "Bearer \(TOKEN_AUTH)"
         ]
-        let urlString = "https://api.themoviedb.org/3/movie/\(list)?language=en-US&page=1"
-        guard let nsUrl = NSURL(string: urlString ) else { return }
-        let request = NSMutableURLRequest(url: nsUrl as URL,
+        
+        let request = NSMutableURLRequest(url: NSURL(string: "https://api.themoviedb.org/3/movie/\(list)?language=en-US&page=1")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
                                           timeoutInterval: 10.0)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let results = try decoder.decode(MoviesResponse.self, from: data)
-                completion(.success(results.results))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        
-        dataTask.resume()
+        networkManager.performRequest(withRequest: request, responseType: Movies.self, completion: completion)
     }
     
-    func fetchMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void) {
+    func getMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void) {
         let headers = [
             "accept": "application/json",
             "Authorization": "Bearer \(TOKEN_AUTH)"
@@ -63,21 +63,7 @@ class MovieService {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try decoder.decode(Movie.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        networkManager.performRequest(withRequest: request, responseType: Movie.self, completion: completion)
     }
     
     func fetchCredits(forId id: Int, completion: @escaping(Result<MovieCredits, Error>) -> Void) {
@@ -92,21 +78,7 @@ class MovieService {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try decoder.decode(MovieCredits.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        networkManager.performRequest(withRequest: request, responseType: MovieCredits.self, completion: completion)
     }
     
     func getVideos(forId id: Int, completion: @escaping(Result<MovieVideos, Error>) -> Void) {
@@ -122,24 +94,10 @@ class MovieService {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try decoder.decode(MovieVideos.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        networkManager.performRequest(withRequest: request, responseType: MovieVideos.self, completion: completion)
     }
     
-    func searchMovie(withName name: String, completion: @escaping(Result<[Movie], Error>) -> Void) {
+    func searchMovie(withName name: String, completion: @escaping(Result<Movies, Error>) -> Void) {
         let headers = [
             "accept": "application/json",
             "Authorization": "Bearer \(TOKEN_AUTH)"
@@ -157,21 +115,7 @@ class MovieService {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data, response, error) -> Void in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let results = try decoder.decode(MoviesResponse.self, from: data)
-                completion(.success(results.results))
-            } catch {
-                completion(.failure(error))
-            }
-        })
-        dataTask.resume()
+        networkManager.performRequest(withRequest: request, responseType: Movies.self, completion: completion)
     }
     
     //MARK: - CoreData
@@ -190,26 +134,21 @@ class MovieService {
         
         do {
             try managedContext.save()
-//            print("DEBUG: \(posterImageUrl) and \(id) are saved in favoriteMovies entity in CoreData.")
             completion()
         } catch {
             print("DEBUG: Error while saving favorite movie to core data, \(error.localizedDescription)")
         }
     }
     
-    func fetchCoreData(forMovie movie: Movie? = nil, completion: @escaping(Int, String) -> Void) {
+    func fetchCoreData(completion: @escaping(Int, String) -> Void) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-        if let id = movie?.id {
-            fetchRequest.predicate = NSPredicate(format: "id == %i", id)
-        }
         fetchRequest.returnsObjectsAsFaults = false
         
         do {
             let result = try managedContext.fetch(fetchRequest)
             for data in result as! [NSManagedObject] {
-//                print("DEBUG: Retrieved core data: \(data.value(forKey: "id")) and \(data.value(forKey: "posterImageUrl"))")
                 let posterImageUrl = data.value(forKey: "posterImageUrl")
                 let id = data.value(forKey: "id")
                 completion(id as! Int, posterImageUrl as! String)
@@ -253,7 +192,6 @@ class MovieService {
                 let managedObjectData:NSManagedObject = managedObject as! NSManagedObject
                 managedContext.delete(managedObjectData)
                 try managedContext.save()
-//                print("DEBUG: \(managedContext) is deleted.")
                 completion()
             }
         } catch let error as NSError {
@@ -261,3 +199,27 @@ class MovieService {
         }
     }
 }
+
+//MARK: Extension for fetchCoreData with a given movie id
+
+extension MovieServicing {
+    func fetchCoreData(forMovie movie: Movie, completion: @escaping(Int, String) -> Void) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        fetchRequest.predicate = NSPredicate(format: "id == %i", movie.id)
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        do {
+            let result = try managedContext.fetch(fetchRequest)
+            for data in result as! [NSManagedObject] {
+                let posterImageUrl = data.value(forKey: "posterImageUrl")
+                let id = data.value(forKey: "id")
+                completion(id as! Int, posterImageUrl as! String)
+            }
+        } catch {
+            print("DEBUG: Error while fetching the core data, \(error.localizedDescription)")
+        }
+    }
+}
+
