@@ -83,7 +83,6 @@ final class SearchViewModelTests: XCTestCase {
         //GIVEN
         let mockService = MockMovieService()
         mockService.getMovieResult = .failure(MockAPIError.someError)
-        mockService.shouldFail = true
         
         let sut = SearchViewModel(movieService: mockService)
         

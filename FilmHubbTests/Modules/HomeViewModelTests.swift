@@ -22,7 +22,6 @@ final class HomeViewModelTests: XCTestCase {
         let sut = HomeViewModel(movieService: mockService)
         let delegate = MockHomeViewModelDelegate()
         sut.delegate = delegate
-        mockService.shouldFail = false
         
         let expectation = XCTestExpectation(description: "Movies fetched")
         
@@ -46,7 +45,6 @@ final class HomeViewModelTests: XCTestCase {
         //GIVEN
         let mockService = MockMovieService()
         mockService.getMoviesResult = .failure(MockAPIError.someError)
-        mockService.shouldFail = true
         
         let sut = HomeViewModel(movieService: mockService)
         
@@ -96,7 +94,6 @@ final class HomeViewModelTests: XCTestCase {
         //GIVEN
         let mockService = MockMovieService()
         mockService.getMovieResult = .failure(MockAPIError.someError)
-        mockService.shouldFail = true
         
         let sut = HomeViewModel(movieService: mockService)
         

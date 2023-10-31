@@ -29,31 +29,10 @@ protocol MovieServicing {
 
 class MovieService: MovieServicing {
     
-    var session: URLSession
-    var decoder: JSONDecoder
+    var networkManager: NetworkManaging
     
-    init(session: URLSession = URLSession.shared, decoder: JSONDecoder = JSONDecoder()) {
-        self.session = session
-        self.decoder = decoder
-    }
-    
-    private func performRequest<T: Codable>(withRequest request: NSMutableURLRequest, responseType: T.Type, completion: @escaping(Result<T, Error>) -> Void) {
-        
-        let dataTask = session.dataTask(with: request as URLRequest) { data, response, error in
-            guard let data = data, error == nil else {
-                completion(.failure(error ?? APIError.invalidData))
-                return
-            }
-            
-            do {
-                self.decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try self.decoder.decode(T.self, from: data)
-                completion(.success(result))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-        dataTask.resume()
+    init(networkManager: NetworkManaging = NetworkManager()) {
+        self.networkManager = networkManager
     }
     
     func getMovies(for list: String, completion: @escaping(Result<Movies, Error>) -> Void) {
@@ -62,15 +41,14 @@ class MovieService: MovieServicing {
             "accept": "application/json",
             "Authorization": "Bearer \(TOKEN_AUTH)"
         ]
-        let urlString = "https://api.themoviedb.org/3/movie/\(list)?language=en-US&page=1"
-        guard let nsUrl = NSURL(string: urlString ) else { return }
-        let request = NSMutableURLRequest(url: nsUrl as URL,
+        
+        let request = NSMutableURLRequest(url: NSURL(string: "https://api.themoviedb.org/3/movie/\(list)?language=en-US&page=1")! as URL,
                                           cachePolicy: .useProtocolCachePolicy,
                                           timeoutInterval: 10.0)
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        performRequest(withRequest: request, responseType: Movies.self, completion: completion)
+        networkManager.performRequest(withRequest: request, responseType: Movies.self, completion: completion)
     }
     
     func getMovie(forId id: Int, completion: @escaping(Result<Movie, Error>) -> Void) {
@@ -85,7 +63,7 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        performRequest(withRequest: request, responseType: Movie.self, completion: completion)
+        networkManager.performRequest(withRequest: request, responseType: Movie.self, completion: completion)
     }
     
     func fetchCredits(forId id: Int, completion: @escaping(Result<MovieCredits, Error>) -> Void) {
@@ -100,7 +78,7 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        performRequest(withRequest: request, responseType: MovieCredits.self, completion: completion)
+        networkManager.performRequest(withRequest: request, responseType: MovieCredits.self, completion: completion)
     }
     
     func getVideos(forId id: Int, completion: @escaping(Result<MovieVideos, Error>) -> Void) {
@@ -116,7 +94,7 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        performRequest(withRequest: request, responseType: MovieVideos.self, completion: completion)
+        networkManager.performRequest(withRequest: request, responseType: MovieVideos.self, completion: completion)
     }
     
     func searchMovie(withName name: String, completion: @escaping(Result<Movies, Error>) -> Void) {
@@ -137,7 +115,7 @@ class MovieService: MovieServicing {
         request.httpMethod = "GET"
         request.allHTTPHeaderFields = headers
         
-        performRequest(withRequest: request, responseType: Movies.self, completion: completion)
+        networkManager.performRequest(withRequest: request, responseType: Movies.self, completion: completion)
     }
     
     //MARK: - CoreData

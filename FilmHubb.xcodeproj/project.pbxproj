@@ -40,6 +40,9 @@
 		C2B91F562ACB252800793947 /* MovieViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B91F552ACB252800793947 /* MovieViewCell.swift */; };
 		C2CF91912ACDA4D600CB82FC /* InspectorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CF91902ACDA4D600CB82FC /* InspectorController.swift */; };
 		C2CF91952ACDA56D00CB82FC /* InspectorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2CF91942ACDA56D00CB82FC /* InspectorViewModel.swift */; };
+		C2E9AA872AF010890062B62F /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9AA862AF010890062B62F /* NetworkManager.swift */; };
+		C2E9AA892AF030490062B62F /* MockNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9AA882AF030490062B62F /* MockNetworkManager.swift */; };
+		C2E9AA8C2AF031CB0062B62F /* MovieServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9AA8B2AF031CB0062B62F /* MovieServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +90,9 @@
 		C2B91F552ACB252800793947 /* MovieViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieViewCell.swift; sourceTree = "<group>"; };
 		C2CF91902ACDA4D600CB82FC /* InspectorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorController.swift; sourceTree = "<group>"; };
 		C2CF91942ACDA56D00CB82FC /* InspectorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorViewModel.swift; sourceTree = "<group>"; };
+		C2E9AA862AF010890062B62F /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		C2E9AA882AF030490062B62F /* MockNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkManager.swift; sourceTree = "<group>"; };
+		C2E9AA8B2AF031CB0062B62F /* MovieServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				C26940462AE9CB4300EC5F2A /* MockModels.swift */,
+				C2E9AA882AF030490062B62F /* MockNetworkManager.swift */,
 				C269403D2AE9772100EC5F2A /* MockMovieService.swift */,
 				C269404B2AEC1ED800EC5F2A /* MockHomeViewModelDelegate.swift */,
 			);
@@ -180,6 +187,7 @@
 				C2B73D652AE42E0E00ECFD7C /* FilmHubb.xctestplan */,
 				C2B91F1F2ACADA1300793947 /* FilmHubb */,
 				C2B73D5D2AE41E9600ECFD7C /* FilmHubbTests */,
+				C2E9AA8A2AF031B60062B62F /* Service */,
 				C2B91F1E2ACADA1300793947 /* Products */,
 				C269403F2AE97C5100EC5F2A /* Frameworks */,
 			);
@@ -245,6 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				C2B91F492ACB09FD00793947 /* MovieService.swift */,
+				C2E9AA862AF010890062B62F /* NetworkManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -293,6 +302,14 @@
 				C2CF91942ACDA56D00CB82FC /* InspectorViewModel.swift */,
 			);
 			path = Inspector;
+			sourceTree = "<group>";
+		};
+		C2E9AA8A2AF031B60062B62F /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				C2E9AA8B2AF031CB0062B62F /* MovieServiceTests.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -408,8 +425,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2E9AA892AF030490062B62F /* MockNetworkManager.swift in Sources */,
 				C269404C2AEC1ED800EC5F2A /* MockHomeViewModelDelegate.swift in Sources */,
 				C26940472AE9CB4300EC5F2A /* MockModels.swift in Sources */,
+				C2E9AA8C2AF031CB0062B62F /* MovieServiceTests.swift in Sources */,
 				C269403E2AE9772100EC5F2A /* MockMovieService.swift in Sources */,
 				C26940492AE9CD8C00EC5F2A /* HomeViewModelTests.swift in Sources */,
 				C269404E2AEFCFC400EC5F2A /* SearchViewModelTests.swift in Sources */,
@@ -420,6 +439,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C2E9AA872AF010890062B62F /* NetworkManager.swift in Sources */,
 				C2B91F212ACADA1300793947 /* AppDelegate.swift in Sources */,
 				C2B91F432ACAE56F00793947 /* SearchController.swift in Sources */,
 				C244F1442AD2D8BA00496948 /* FilmHubb.xcdatamodeld in Sources */,

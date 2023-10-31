@@ -12,12 +12,11 @@ enum MockAPIError: Error {
     case someError
     case invalidId
     case invalidName
+    case invalidList
     
 }
 
 class MockMovieService: MovieServicing {
-    
-    var shouldFail = false
     var isGetMoviesCalled = false
     
     var getMoviesResult: (Result<Movies, Error>)?
