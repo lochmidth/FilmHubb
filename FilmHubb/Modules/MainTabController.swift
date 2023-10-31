@@ -17,6 +17,7 @@ class MainTabController: UITabBarController {
         super.viewDidLoad()
         
         configureViewControllers()
+        
         showLoader(true)
     }
     

@@ -12,14 +12,17 @@ class FavoriteMoviesViewModel {
     //MARK: - Properties
     
     private let movieService: MovieServicing
+    private let coreDataManager: CoreDataManaging
     
     var ids = [Int]()
     var posterImageUrls = [String]()
     
     //MARK: - Lifecycle
     
-    init(movieService: MovieServicing = MovieService()) {
+    init(movieService: MovieServicing = MovieService(), coreDataManager: CoreDataManaging = CoreDataManager()) {
         self.movieService = movieService
+        self.coreDataManager = coreDataManager
+        
         fetchFavoriteMovies {}
     }
    
@@ -30,7 +33,7 @@ class FavoriteMoviesViewModel {
         self.ids = [Int]()
         self.posterImageUrls = [String]()
         
-        movieService.fetchCoreData { id, posterPath in
+        coreDataManager.fetchCoreData { id, posterPath in
             self.ids.append(id)
             let fullPosterPath = "https://image.tmdb.org/t/p/w500/" + posterPath
             self.posterImageUrls.append(fullPosterPath)

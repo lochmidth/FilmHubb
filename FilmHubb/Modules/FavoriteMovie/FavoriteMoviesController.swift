@@ -48,8 +48,8 @@ class FavoriteMoviesController: UICollectionViewController {
         collectionView.register(MovieViewCell.self, forCellWithReuseIdentifier: favoriteIdentifier)
     }
     func reloadData() {
-        DispatchQueue.main.async {
-            self.viewModel.fetchFavoriteMovies {
+        viewModel.fetchFavoriteMovies {
+            DispatchQueue.main.async {
                 self.collectionView.reloadData()
             }
         }

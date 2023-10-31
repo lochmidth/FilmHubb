@@ -43,6 +43,7 @@
 		C2E9AA872AF010890062B62F /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9AA862AF010890062B62F /* NetworkManager.swift */; };
 		C2E9AA892AF030490062B62F /* MockNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9AA882AF030490062B62F /* MockNetworkManager.swift */; };
 		C2E9AA8C2AF031CB0062B62F /* MovieServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9AA8B2AF031CB0062B62F /* MovieServiceTests.swift */; };
+		C2E9AA902AF18B3A0062B62F /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2E9AA8F2AF18B3A0062B62F /* CoreDataManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +94,7 @@
 		C2E9AA862AF010890062B62F /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		C2E9AA882AF030490062B62F /* MockNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkManager.swift; sourceTree = "<group>"; };
 		C2E9AA8B2AF031CB0062B62F /* MovieServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieServiceTests.swift; sourceTree = "<group>"; };
+		C2E9AA8F2AF18B3A0062B62F /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -254,6 +256,7 @@
 			children = (
 				C2B91F492ACB09FD00793947 /* MovieService.swift */,
 				C2E9AA862AF010890062B62F /* NetworkManager.swift */,
+				C2E9AA8F2AF18B3A0062B62F /* CoreDataManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				C244F1442AD2D8BA00496948 /* FilmHubb.xcdatamodeld in Sources */,
 				C2B91F562ACB252800793947 /* MovieViewCell.swift in Sources */,
 				C2B91F232ACADA1300793947 /* SceneDelegate.swift in Sources */,
+				C2E9AA902AF18B3A0062B62F /* CoreDataManager.swift in Sources */,
 				C2B91F472ACB003900793947 /* HomeViewModel.swift in Sources */,
 				C2B91F452ACAF71100793947 /* CarouselViewCell.swift in Sources */,
 				C2CF91952ACDA56D00CB82FC /* InspectorViewModel.swift in Sources */,
