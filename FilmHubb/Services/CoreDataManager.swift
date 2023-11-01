@@ -12,7 +12,7 @@ private let entityName = "FavoriteMovies"
 
 protocol CoreDataManaging {
     func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
-    func fetchCoreData(completion: @escaping(Int, String) -> Void)
+    func fetchAllCoreData(completion: @escaping(Int, String) -> Void)
     func fetchCoreData(forMovie movie: Movie, completion: @escaping(Int, String) -> Void)
     func deleteCoreData(forMovie movie: Movie, completion: @escaping() -> Void)
     func deleteAllData(completion: @escaping() -> Void)
@@ -46,7 +46,7 @@ class CoreDataManager: CoreDataManaging {
         }
     }
     
-    func fetchCoreData(completion: @escaping(Int, String) -> Void) {
+    func fetchAllCoreData(completion: @escaping(Int, String) -> Void) {
         guard let appDelegate = application.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)

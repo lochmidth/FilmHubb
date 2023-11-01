@@ -18,10 +18,10 @@ class SearchViewModel {
     }
     
     func searchMovie(withName name: String, completion: @escaping() -> Void) {
-        movieService.searchMovie(withName: name) { results in
+        movieService.searchMovie(withName: name) { [weak self] results in
             switch results {
             case .success(let movies):
-                self.movies = movies.results
+                self?.movies = movies.results
                 completion()
             case .failure(let error):
                 print("DEBUG: Error while searching for movies, \(error)")
