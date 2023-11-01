@@ -35,7 +35,6 @@ final class SearchViewModelTests: XCTestCase {
     func test_givenInvalidName_whenSearchMovie_thenSuccess() {
         //GIVEN
         let mockService = MockMovieService()
-        let movies = Movies(results: [])
         mockService.searchMovieResult = .failure(MockAPIError.invalidName)
         
         let sut = SearchViewModel(movieService: mockService)

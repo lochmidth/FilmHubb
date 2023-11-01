@@ -14,7 +14,8 @@ class InspectorViewModel {
     let movie: Movie
     let movieCredits: MovieCredits
     let movieVideos: MovieVideos
-    var movieService: MovieServicing
+    private let movieService: MovieServicing
+    private let coreDataManager: CoreDataManaging
     
     var isFavorite = false
     
@@ -135,7 +136,9 @@ class InspectorViewModel {
     
     //MARK: - Lifecycle
     
-    init(movieService: MovieServicing = MovieService(), movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
+    init(movieService: MovieServicing = MovieService(), coreDataManager: CoreDataManaging = CoreDataManager(),
+         movie: Movie, movieCredits: MovieCredits, movieVideos: MovieVideos) {
+        self.coreDataManager = coreDataManager
         self.movieService = movieService
         self.movie = movie
         self.movieCredits = movieCredits
@@ -176,11 +179,11 @@ class InspectorViewModel {
     }
     
     func createCoreData(forMovie movie: Movie, completion: @escaping() -> Void) {
-        movieService.createCoreData(forMovie: movie, completion: completion)
+        coreDataManager.createCoreData(forMovie: movie, completion: completion)
     }
     
     func fetchCoreDataForCurrentMovie() {
-        movieService.fetchCoreData(forMovie: movie) { id, posterImageUrl in
+        coreDataManager.fetchCoreData(forMovie: movie) { id, posterImageUrl in
             if id == self.movie.id {
                 self.isFavorite = true
             } else {
@@ -191,11 +194,11 @@ class InspectorViewModel {
     
     func handleFavoritePressed(completion: @escaping(UIImage?) -> Void) {
         if isFavorite {
-            movieService.deleteCoreData(forMovie: movie) {
+            coreDataManager.deleteCoreData(forMovie: movie) {
                 completion(UIImage(systemName: "star"))
             }
         } else {
-            movieService.createCoreData(forMovie: movie) {
+            coreDataManager.createCoreData(forMovie: movie) {
                 completion(UIImage(systemName: "star.fill"))
             }
         }

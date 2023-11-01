@@ -77,10 +77,10 @@ class HomeViewModel {
     func getMovies(completion: @escaping() -> Void) {
         let types = sections.map({ $0.type })
         types.forEach { type in
-            movieService.getMovies(for: type.listName) { results in
+            movieService.getMovies(for: type.listName) { [weak self] results in
                 switch results {
                 case .success(let movies):
-                    self.updateSection(type: type, movies: movies)
+                    self?.updateSection(type: type, movies: movies)
                 case .failure(let error):
                     print("DEBUG: Error while fetching movie lists, \(error.localizedDescription)")
                 }

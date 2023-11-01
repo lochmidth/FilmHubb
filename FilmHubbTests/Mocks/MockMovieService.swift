@@ -72,18 +72,4 @@ class MockMovieService: MovieServicing {
             completion(searchMovieResult)
         }
     }
-    
-    func fetchCoreData(completion: @escaping (Int, String) -> Void) {
-        
-    }
-    
-    func createCoreData(forMovie movie: FilmHubb.Movie, completion: @escaping () -> Void) {
-        
-    }
-    
-    func deleteCoreData(forMovie movie: FilmHubb.Movie, completion: @escaping () -> Void) {
-        
-    }
-    
-    
 }
