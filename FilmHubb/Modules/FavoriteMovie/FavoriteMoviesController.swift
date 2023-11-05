@@ -72,13 +72,19 @@ extension FavoriteMoviesController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         showLoader(true)
         let id = viewModel.ids[indexPath.row]
-        viewModel.getAllMovieInfo(forId: id) { movieInfo, movieCredits, movieVideos in
-            DispatchQueue.main.async {
-                let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
-                                                                                   movieCredits: movieCredits,
-                                                                                   movieVideos: movieVideos))
-                controller.modalPresentationStyle = .fullScreen
-                self.navigationController?.pushViewController(controller, animated: true)
+        
+        Task {
+            do {
+                let (movieInfo, movieCredits, movieVideos) = try await viewModel.getAllMovieInfo(for: id)
+                DispatchQueue.main.async {
+                    let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
+                                                                                       movieCredits: movieCredits,
+                                                                                       movieVideos: movieVideos))
+                    controller.modalPresentationStyle = .fullScreen
+                    self.navigationController?.pushViewController(controller, animated: true)
+                }
+            } catch {
+                throw error
             }
         }
     }

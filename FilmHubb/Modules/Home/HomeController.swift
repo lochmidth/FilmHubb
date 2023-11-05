@@ -32,8 +32,11 @@ class HomeController: UIViewController {
         
         configureViewModel()
         configureUI()
-        viewModel.getMovies {
-            self.showLoader(false)
+        Task {
+            do {
+                try await viewModel.getMovies()
+                self.showLoader(false)
+            }
         }
     }
     
@@ -145,18 +148,19 @@ extension HomeController: HomeViewModelDelegate {
 extension HomeController: CarouselViewCellDelegate {
     func handleShowInspectorController(withId id: Int) {
         showLoader(true)
-        viewModel.getAllMovieInfo(forId: id) { [weak self] results in
-            switch results {
-            case .success(let (movieInfo, movieCredits, movieVideos)):
+        
+        Task {
+            do {
+                let (movieInfo, movieCredits, movieVideos) = try await viewModel.getAllMovieInfo(for: id)
                 DispatchQueue.main.async {
                     let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
                                                                                        movieCredits: movieCredits,
                                                                                        movieVideos: movieVideos))
                     controller.modalPresentationStyle = .fullScreen
-                    self?.navigationController?.pushViewController(controller, animated: true)
+                    self.navigationController?.pushViewController(controller, animated: true)
                 }
-            case .failure(let error):
-                self?.showMessage(withTitle: "Ooops!", message: error.localizedDescription)
+            } catch {
+                throw error
             }
         }
     }

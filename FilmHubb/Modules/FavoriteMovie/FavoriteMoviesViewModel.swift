@@ -41,46 +41,38 @@ class FavoriteMoviesViewModel {
         completion()
     }
     
-    func getAllMovieInfo(forId id: Int, completion: @escaping(Movie, MovieCredits, MovieVideos) -> Void) {
-        getMovie(withId: id) { movie in
-            self.getCredits(forId: id) { movieCredits in
-                self.getMovieVideos(forId: id) { movieVideos in
-                    completion(movie, movieCredits, movieVideos)
-                }
-            }
+    func getAllMovieInfo(for id: Int) async throws -> (Movie, MovieCredits, MovieVideos) {
+        do {
+            let movie = try await getMovie(withId: id)
+            let movieCredits = try await getCredits(forId: id)
+            let movieVideos = try await getMovieVideos(forId: id)
+            return (movie, movieCredits, movieVideos)
+        } catch {
+            throw error
         }
     }
     
-    func getMovie(withId id: Int, completion: @escaping(Movie) -> Void) {
-        movieService.getMovie(forId: id) { resultForMovie in
-            switch resultForMovie {
-            case .success(let movieInfo):
-                completion(movieInfo)
-            case .failure(let error):
-                print("DEBUG: Error while fetching movie info, \(error)")
-            }
+    func getMovie(withId id: Int) async throws -> Movie {
+        do {
+            return try await movieService.getMovie(forId: id)
+        } catch {
+            throw error
         }
     }
     
-    func getCredits(forId id: Int, completion: @escaping(MovieCredits) -> Void) {
-        movieService.fetchCredits(forId: id) { resultForCredits in
-            switch resultForCredits {
-            case .success(let movieCredits):
-                completion(movieCredits)
-            case .failure(let error):
-                print("DEBUG: Error while fetching movie credits, \(error)")
-            }
+    func getCredits(forId id: Int) async throws -> MovieCredits {
+        do {
+            return try await movieService.fetchCredits(forId: id)
+        } catch {
+            throw error
         }
     }
     
-    func getMovieVideos(forId id: Int, completion: @escaping(MovieVideos) -> Void) {
-        movieService.getVideos(forId: id) { resultforMovieVideos in
-            switch resultforMovieVideos {
-            case .success(let movieVideos):
-                completion(movieVideos)
-            case .failure(let error):
-                print("DEBUG: Error while fetching movie videos, \(error)")
-            }
+    func getMovieVideos(forId id: Int) async throws -> MovieVideos {
+        do {
+            return try await movieService.getVideos(forId: id)
+        } catch {
+            throw error
         }
     }
 }

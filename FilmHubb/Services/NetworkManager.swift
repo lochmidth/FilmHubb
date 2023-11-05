@@ -9,9 +9,17 @@ import Foundation
 
 protocol NetworkManaging {
     func performRequest<T: Codable>(withRequest request: NSMutableURLRequest, responseType: T.Type, completion: @escaping(Result<T, Error>) -> Void)
+    func performRequest<T: Codable>(withRequest request: NSMutableURLRequest, responseType: T.Type) async throws -> T
 }
 
 class NetworkManager: NetworkManaging {
+    func performRequest<T: Codable>(withRequest request: NSMutableURLRequest, responseType: T.Type) async throws -> T {
+        let (data, _) = try await session.data(for: request as URLRequest)
+        
+        self.decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return try self.decoder.decode(T.self, from: data)
+    }
+    
     var session: URLSession
     var decoder: JSONDecoder
     
@@ -38,4 +46,6 @@ class NetworkManager: NetworkManaging {
         }
         dataTask.resume()
     }
+    
+    
 }
