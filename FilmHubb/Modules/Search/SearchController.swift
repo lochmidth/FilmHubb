@@ -101,18 +101,18 @@ extension SearchController {
             showLoader(true)
             let id = viewModel.movies[indexPath.item].id
             
-            viewModel.getAllMovieInfo(forId: id) { [weak self] results in
-                switch results {
-                case .success(let (movieInfo, movieCredits, movieVideos)):
+            Task {
+                do {
+                    let (movieInfo, movieCredits, movieVideos) = try await viewModel.getAllMovieInfo(for: id)
                     DispatchQueue.main.async {
                         let controller = InspectorController(viewModel: InspectorViewModel(movie: movieInfo,
                                                                                            movieCredits: movieCredits,
                                                                                            movieVideos: movieVideos))
                         controller.modalPresentationStyle = .fullScreen
-                        self?.navigationController?.pushViewController(controller, animated: true)
+                        self.navigationController?.pushViewController(controller, animated: true)
                     }
-                case .failure(let error):
-                    self?.showMessage(withTitle: "Ooops!", message: error.localizedDescription)
+                } catch {
+                    throw error
                 }
             }
         }
@@ -141,9 +141,12 @@ extension SearchController: UISearchResultsUpdating {
         searchTimer?.invalidate()
         
         searchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { [weak self] _ in
-            self?.viewModel.searchMovie(withName: searchText) {
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
+            Task {
+                do {
+                    try await self?.viewModel.searchMovie(withName: searchText)
+                    DispatchQueue.main.async {
+                        self?.tableView.reloadData()
+                    }
                 }
             }
         })

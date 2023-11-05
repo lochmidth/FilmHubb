@@ -17,59 +17,94 @@ enum MockAPIError: Error {
 }
 
 class MockMovieService: MovieServicing {
+    
     var isGetMoviesCalled = false
+    var getMoviesResult: Result<Movies, Error>?
     
-    var getMoviesResult: (Result<Movies, Error>)?
-    
-    func getMovies(for list: String, completion: @escaping (Result<Movies, Error>) -> Void) {
+    func getMovies(for list: String) async throws -> Movies {
         isGetMoviesCalled = true
       
-        if let getMoviesResult {
-            completion(getMoviesResult)
+        if let getMoviesResult = getMoviesResult {
+            switch getMoviesResult {
+            case .success(let movies):
+                return movies
+            case .failure(let error):
+                throw error
+            }
+        } else {
+            throw MockAPIError.someError
         }
     }
     
-    var getMovieResult: (Result<FilmHubb.Movie, Error>)?
+    var getMovieResult: Result<FilmHubb.Movie, Error>?
     var isGetMovieWithIdCalled = false
     
-    func getMovie(forId id: Int, completion: @escaping (Result<FilmHubb.Movie, Error>) -> Void) {
+    func getMovie(forId id: Int) async throws -> Movie{
         isGetMovieWithIdCalled = true
         
-        if let getMovieResult {
-            completion(getMovieResult)
+        if let getMovieResult = getMovieResult {
+            switch getMovieResult {
+            case .success(let movie):
+                return movie
+            case .failure(let error):
+                throw error
+            }
+        } else {
+            throw MockAPIError.someError
         }
     }
     
-    var fetchCreditsResult: (Result<FilmHubb.MovieCredits, Error>)?
+    var fetchCreditsResult: Result<FilmHubb.MovieCredits, Error>?
     var isfetchCreditsCalled = false
     
-    func fetchCredits(forId id: Int, completion: @escaping (Result<FilmHubb.MovieCredits, Error>) -> Void) {
+    func fetchCredits(forId id: Int) async throws -> MovieCredits {
         isfetchCreditsCalled = true
         
-        if let fetchCreditsResult {
-            completion(fetchCreditsResult)
+        if let fetchCreditsResult = fetchCreditsResult {
+            switch fetchCreditsResult {
+            case .success(let movieCredits):
+                return movieCredits
+            case .failure(let error):
+                throw error
+            }
+        } else {
+            throw MockAPIError.someError
         }
     }
     
-    var getVideosResult: (Result<FilmHubb.MovieVideos, Error>)?
+    var getVideosResult: Result<FilmHubb.MovieVideos, Error>?
     var isGetVideosCalled = false
     
-    func getVideos(forId id: Int, completion: @escaping (Result<FilmHubb.MovieVideos, Error>) -> Void) {
+    func getVideos(forId id: Int) async throws -> MovieVideos {
         isGetVideosCalled = true
         
-        if let getVideosResult {
-            completion(getVideosResult)
+        if let getVideosResult = getVideosResult {
+            switch getVideosResult {
+            case .success(let movieVideos):
+                return movieVideos
+            case .failure(let error):
+                throw error
+            }
+        } else {
+            throw MockAPIError.someError
         }
     }
     
-    var searchMovieResult: (Result<FilmHubb.Movies, Error>)?
+    var searchMovieResult: Result<FilmHubb.Movies, Error>?
     var isSearchMovieCalled = false
     
-    func searchMovie(withName name: String, completion: @escaping (Result<FilmHubb.Movies, Error>) -> Void) {
+    func searchMovie(withName name: String) async throws -> Movies {
         isSearchMovieCalled = true
         
-        if let searchMovieResult {
-            completion(searchMovieResult)
+        if let searchMovieResult = searchMovieResult {
+            switch searchMovieResult {
+            case .success(let movies):
+                return movies
+            case .failure(let error):
+                throw error
+            }
+        } else {
+            throw MockAPIError.someError
         }
     }
 }

@@ -10,8 +10,8 @@ import XCTest
 
 final class MovieServiceTests: XCTestCase {
 
-    func test_givenValidList_whenGetMoviesForList_thenSuccess() {
-        //WHEN
+    func test_givenValidList_whenGetMoviesForList_thenSuccess() async {
+        //GIVEN
         let movies = Movies(results: [mockMovie1, mockMovie2])
         
         let mockNetworkManager = MockNetworkManager()
@@ -19,184 +19,152 @@ final class MovieServiceTests: XCTestCase {
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movies with given list name fetched")
-        
         //WHEN
-        sut.getMovies(for: "popular") { results in
-            switch results {
-            case .success(let movies):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertTrue(!movies.results.isEmpty)
-            case .failure(let error):
-                XCTAssertNil(error)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedMovies = try await sut.getMovies(for: "popular")
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertEqual(fetchedMovies.results.first?.id, movies.results.first?.id)
+        } catch {
+            XCTAssertNil(error)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenInvalidList_whenGetMoviesForList_thenFail() {
-        //WHEN
+    func test_givenInvalidList_whenGetMoviesForList_thenFail() async {
+        //GIVEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .failure(MockAPIError.invalidList)
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movies with given invalid list name fetch failed")
-        
         //WHEN
-        sut.getMovies(for: "pupolur") { results in
-            switch results {
-            case .success(let movies):
-                XCTAssertTrue(movies.results.isEmpty)
-            case .failure(let error):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidList)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedMovies = try await sut.getMovies(for: "pipiler")
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertTrue(fetchedMovies.results.isEmpty)
+        } catch {
+            XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidList)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenValidId_whenGetMovieForId_thenSuccess() {
-        //WHEN
+    func test_givenValidId_whenGetMovieForId_thenSuccess() async {
+        //GIVEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .success(mockMovie1)
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movies with given id name fetch failed")
-        
         //WHEN
-        sut.getMovie(forId: 123) { results in
-            switch results {
-            case .success(let movie):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(movie.id, 123)
-            case .failure(let error):
-                XCTAssertNil(error)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedMovie = try await sut.getMovie(forId: 123)
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertEqual(fetchedMovie.id, 123)
+        } catch {
+            XCTAssertNil(error)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenInvalidId_whenMovieForId_thenFail() {
-        //WHEN
+    func test_givenInvalidId_whenMovieForId_thenFail() async {
+        //GIVEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .failure(MockAPIError.invalidId)
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movies with given invalid id fetch failed")
-        
         //WHEN
-        sut.getMovie(forId: 124) { results in
-            switch results {
-            case .success(let movie):
-                XCTAssertNil(movie)
-            case .failure(let error):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidId)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedMovie = try await sut.getMovie(forId: 124)
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertNil(fetchedMovie)
+        } catch {
+            XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidId)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenValidId_whenFetchCreditsForId_thenSuccess() {
-        //WHEN
+    func test_givenValidId_whenFetchCreditsForId_thenSuccess() async {
+        //GIVEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .success(mockMovieCredits)
         
         let sut = MovieService(networkManager: mockNetworkManager)
-        
-        let expectation = XCTestExpectation(description: "Movie Credit with given id name fetch failed")
-        
+    
         //WHEN
-        sut.fetchCredits(forId: 123) { results in
-            switch results {
-            case .success(let movieCredits):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(movieCredits.id, 123)
-            case .failure(let error):
-                XCTAssertNil(error)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedCredits = try await sut.fetchCredits(forId: 123)
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertEqual(fetchedCredits.id, 123)
+        } catch {
+            XCTAssertNil(error)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenInvalidId_whenFetchCreditsForId_thenFail() {
-        //WHEN
+    func test_givenInvalidId_whenFetchCreditsForId_thenFail() async {
+        //GIVEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .failure(MockAPIError.invalidId)
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "movie Credits with given invalid id fetch failed")
-        
         //WHEN
-        sut.getMovie(forId: 124) { results in
-            switch results {
-            case .success(let movieCredits):
-                XCTAssertNil(movieCredits)
-            case .failure(let error):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidId)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedCredits = try await sut.fetchCredits(forId: 124)
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertNil(fetchedCredits)
+        } catch {
+            XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidId)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenValidId_whenGetVideosForId_thenSuccess() {
+    func test_givenValidId_whenGetVideosForId_thenSuccess() async {
         //WHEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .success(mockMovieVideos)
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movie Videos with given id name fetch failed")
-        
         //WHEN
-        sut.getVideos(forId: 123) { results in
-            switch results {
-            case .success(let movieVideos):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(movieVideos.id, 123)
-            case .failure(let error):
-                XCTAssertNil(error)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedVideos = try await sut.getVideos(forId: 123)
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertEqual(fetchedVideos.id, 123)
+        } catch {
+            XCTAssertNil(error)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenInvalidId_whenGetVideosForId_thenFail() {
+    func test_givenInvalidId_whenGetVideosForId_thenFail() async {
         //WHEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .failure(MockAPIError.invalidId)
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movie Videos with given invalid id fetch failed")
-        
         //WHEN
-        sut.getVideos(forId: 124) { results in
-            switch results {
-            case .success(let movieVideos):
-                XCTAssertNil(movieVideos)
-            case .failure(let error):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidId)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedVideos = try await sut.getVideos(forId: 124)
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertNil(fetchedVideos)
+        } catch {
+            XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidId)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenValidName_whenSearchMovieWithName_thenSuccess() {
+    func test_givenValidName_whenSearchMovieWithName_thenSuccess() async {
         //GIVEN
         let movies = Movies(results: [mockMovie1, mockMovie2])
         
@@ -205,43 +173,34 @@ final class MovieServiceTests: XCTestCase {
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movies  search with given name fetched")
-        
         //WHEN
-        sut.searchMovie(withName: "Mock Movie") { results in
-            switch results {
-            case .success(let movies):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertTrue(!movies.results.isEmpty)
-                XCTAssertEqual(movies.results.first?.originalTitle, "Original Mock Movie 1")
-            case .failure(let error):
-                XCTAssertNil(error)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedMovies = try await sut.searchMovie(withName: "Mock Movie")
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertEqual(fetchedMovies.results.first?.originalTitle, "Original Mock Movie 1")
+        } catch {
+            XCTAssertNil(error)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
     
-    func test_givenInvalidName_whenSearchMovieWithName_thenFail() {
+    func test_givenInvalidName_whenSearchMovieWithName_thenFail() async {
         //GIVEN
         let mockNetworkManager = MockNetworkManager()
         mockNetworkManager.result = .failure(MockAPIError.invalidName)
         
         let sut = MovieService(networkManager: mockNetworkManager)
         
-        let expectation = XCTestExpectation(description: "Movies search with given invalid name fetch failed")
-        
         //WHEN
-        sut.searchMovie(withName: "Mocccck Muuvie") { results in
-            switch results {
-            case .success(let movies):
-                XCTAssertTrue(movies.results.isEmpty)
-            case .failure(let error):
-                XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
-                XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidName)
-            }
-            expectation.fulfill()
+        do {
+            let fetchedMovies = try await sut.searchMovie(withName: "Muck Movie")
+            
+            //THEN
+            XCTAssertTrue(mockNetworkManager.isPerformRequestCalled)
+            XCTAssertNil(fetchedMovies)
+        } catch {
+            XCTAssertEqual(error as! MockAPIError, MockAPIError.invalidName)
         }
-        wait(for: [expectation], timeout: 5.0)
     }
 }
