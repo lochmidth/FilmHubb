@@ -14,22 +14,6 @@ class MockNetworkManager: NetworkManaging {
     
     var isPerformRequestCalled = false
     
-    func performRequest<T>(withRequest request: NSMutableURLRequest, responseType: T.Type, completion: @escaping (Result<T, Error>) -> Void) where T : Decodable, T : Encodable {
-        
-        isPerformRequestCalled = true
-        
-        if let result = result {
-            switch result {
-            case .success(let value as T):
-                completion(.success(value))
-            case .failure(let error):
-                completion(.failure(error))
-            default:
-                completion(.failure(MockAPIError.someError))
-            }
-        }
-    }
-    
     func performRequest<T: Codable>(withRequest request: NSMutableURLRequest, responseType: T.Type) async throws -> T {
         isPerformRequestCalled = true
         
